@@ -1,0 +1,6 @@
+# Python bytecode, macOS Finder files and local virtual environments never belong in the repo.
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/

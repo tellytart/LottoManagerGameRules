@@ -29,6 +29,16 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 5. The Journey
 
+### 2026-09-19: Schema and seal script
+
+- Added the JSON Schema and `scripts/seal.py`. Think of the seal as the wax stamp on the notice: it hashes every byte *above* the checksum line, so the stamp cannot be part of what it stamps.
+- **Decision:** the schema checks shape only and allows unknown extra fields, but rejects an unknown prize or extra *kind*, because a kind we do not know would change how prizes are worked out. Cross-file rules (unique ids, rising dates, real time zones, tiers that can match) are left to `validate.py`, since JSON Schema cannot express them.
+- **Decision:** `seal.py` refuses to write anything that would not be valid JSON, and runs its own `check` on its output, so it cannot produce a file the app would reject. It writes through a temp file and a rename so a crash cannot leave a half-written rules file.
+- **Gotcha:** the seal has to reproduce exactly in Swift. The tests carry one known-answer checksum computed with `shasum`, independently of the script, and the app's tests should reuse it.
+- **Gotcha:** the schema tests skip themselves if `jsonschema` is missing, which is friendly locally and dangerous in CI, so the workflow fails loudly if it is not installed.
+- **Decision:** actions in the workflow are pinned to full commit SHAs, not tags, and it uses `pull_request` (never `pull_request_target`) with a read-only token.
+- Added a minimal `Tests` workflow so pull requests get a status check. It is a stopgap: the CI issue builds the full validation workflow.
+
 ### 2026-09-19: Bootstrap
 
 - Got the first commit ready for an empty repo. An empty repo has no `main`, so a branch protection rule that demands a pull request cannot be satisfied for the very first commit. Richard disabled the ruleset to allow it and re-enables it afterwards.

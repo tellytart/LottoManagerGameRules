@@ -32,8 +32,6 @@ Bump `checkedOn` to today's date, run the checks below, add a `CHANGELOG.md` lin
 
 ## 4. Check and publish
 
-Once the scripts exist (added by later work):
-
-1. `python3 scripts/seal.py` to write the checksum on the last line.
-2. `python3 scripts/validate.py` to run the validation rules, including "no already-published rule set changed".
+1. `python3 scripts/seal.py v1/game-rules.json` to write the checksum on the last line (`--check` verifies it).
+2. `python3 scripts/validate.py` to run the full validation rules, including "no already-published rule set changed" (added by later work).
 3. Open a pull request; the validation workflow must pass. Merge with squash or rebase (the branch keeps a linear history).
