@@ -1,0 +1,4 @@
+# The app checks a SHA-256 over the raw bytes of the rules file, so the bytes
+# must be identical on every machine. Forcing LF line endings stops a Windows
+# checkout or an editor's line-ending conversion from breaking the checksum.
+*.json text eol=lf
