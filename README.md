@@ -25,12 +25,12 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 ## Changing the rules
 
 - A published rule set is never edited. A correction is a new rule set: a later `effectiveFrom`, or the same one with a higher revision.
-- Changes go in by pull request. `main` is protected and keeps a **linear history**, so merge with **squash** or **rebase**, not a merge commit.
-- The file ends with a checksum line written by `scripts/seal.py`; a pull request with a wrong checksum fails the check.
+- Changes go in by pull request. The plan is for `main` to be protected and keep a **linear history**, so merge with **squash** or **rebase**, not a merge commit.
+- The file will end with a checksum line written by `scripts/seal.py`, and a pull request with a wrong checksum will fail a validation check. Both arrive with later work; until the branch protection is switched on and that workflow has run once, nothing enforces them.
 - `.gitattributes` forces LF line endings on `*.json`, because the checksum covers the raw bytes.
 
 The format is specified in the LottoManager project's `docs/game-rules-file.md` (that repository is currently private, so the link may not open for you).
 
 ## Licence
 
-**Undecided.** No licence has been chosen yet (decision recorded 2026-09-19), so until a licence file is added all rights are reserved and this repository may not be reused. The intent is to decide before the first release of the app.
+**Undecided.** No licence has been chosen yet (decision recorded 2026-09-19), so until a licence file is added all rights are reserved and this repository may not be reused.

@@ -9,3 +9,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The
 ### Added
 
 - Repository skeleton: `.gitattributes` (LF endings for `*.json`), `README.md`, `CHECKLIST.md`, and empty `v1/`, `schema/`, `scripts/`, `tests/valid/`, `tests/invalid/` and `.github/workflows/` folders.
+- `AGENTS.md` (instructions for AI agents working in this repo) and `Journal.md` (a running notebook of decisions and gotchas).
