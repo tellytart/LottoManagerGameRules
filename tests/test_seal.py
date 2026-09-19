@@ -173,6 +173,16 @@ class CommandLineTests(unittest.TestCase):
             self.assertNotEqual(self.run_seal(path).returncode, 0)
             self.assertEqual(Path(path).read_bytes(), original)
 
+    def test_sealing_through_a_symlink_updates_the_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = os.path.join(tmp, "real.json")
+            link = os.path.join(tmp, "link.json")
+            Path(target).write_bytes(b'{\n  "schemaVersion": 1\n}\n')
+            os.symlink(target, link)
+            self.assertEqual(self.run_seal(link).returncode, 0)
+            self.assertTrue(os.path.islink(link), "the link must stay a link")
+            self.assertEqual(self.run_seal("--check", target).returncode, 0)
+
     def test_missing_file_is_a_usage_error(self):
         result = self.run_seal("--check", "/nonexistent/rules.json")
         self.assertEqual(result.returncode, 2)

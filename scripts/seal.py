@@ -136,7 +136,8 @@ def _checksum_line(hashed: bytes) -> bytes:
 
 def _write_in_place(path: str, data: bytes) -> None:
     """Replace a file's contents atomically: write a temp file beside it, then rename."""
-    directory = os.path.dirname(os.path.abspath(path))
+    path = os.path.realpath(path)  # if PATH is a symlink, update the file it points to, not the link
+    directory = os.path.dirname(path)
     fd, tmp = tempfile.mkstemp(dir=directory, prefix=".seal-")
     try:
         with os.fdopen(fd, "wb") as handle:

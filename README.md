@@ -31,14 +31,14 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 - The file ends with a checksum line written by `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`), and a pull request with a wrong checksum will fail a validation check. The check arrives with later work; until the branch protection is switched on and that workflow has run once, nothing enforces them.
 - `.gitattributes` forces LF line endings on `*.json`, because the checksum covers the raw bytes.
 
+The format is specified in the LottoManager project's `docs/game-rules-file.md` (that repository is currently private, so the link may not open for you).
+
 ## Running the tests
 
 ```sh
 python3 -m pip install -r requirements.txt   # once: the pinned jsonschema
 python3 -m unittest discover -s tests -v
 ```
-
-The format is specified in the LottoManager project's `docs/game-rules-file.md` (that repository is currently private, so the link may not open for you).
 
 ## Licence
 
