@@ -17,10 +17,10 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 | `v1/game-rules.json` | The file the app fetches (added by a later change) |
 | `schema/game-rules-v1.schema.json` | JSON Schema for the file's shape, so editors and CI flag mistakes |
 | `scripts/seal.py` | Writes (`seal.py FILE`) or verifies (`seal.py --check FILE`) the checksum on the file's last line |
-| `scripts/validate.py` | The full validation rules (later) |
-| `tests/valid/`, `tests/invalid/` | Sample files, shared with the app's own validator so the two stay in step (later) |
+| `scripts/validate.py` | The full validation rules: `validate.py FILE [--base OLDER]` exits 1 with a stable reason code per broken rule (see `tests/invalid/README.md`); `--base` also checks that no published rule set changed |
+| `tests/valid/`, `tests/invalid/`, `tests/expected.json` | Sample files (one invalid sample per rule, mapped to its reason code in `expected.json`), shared with the app's own validator so the two stay in step |
 | `tests/test_*.py` | Unit tests for the scripts and the schema |
-| `.github/workflows/` | CI: `tests.yml` runs the unit tests on every pull request; the full validation workflow comes later |
+| `.github/workflows/` | CI: `tests.yml` runs the unit tests (including every sample file) on every pull request; the full validation workflow comes later |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
 
