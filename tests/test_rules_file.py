@@ -1,8 +1,10 @@
 """Tests for the real rules file, v1/game-rules.json, the file the app fetches.
 
 The other tests check the scripts against small sample files. These check the published
-file itself, so a bad edit (a typo, a stale checksum, a changed held rule set) fails here as
-well as in the CI workflow, before a pull request is even opened. Run with:
+file itself, so a broken file (bad shape, a failing validation rule, a stale checksum) fails here as
+well as in the CI workflow, before a pull request is even opened. These tests do NOT check
+the figures themselves (prices, prize amounts, times): a wrong number that is still valid
+passes, which is why a person reads the file against the official pages (CHECKLIST.md). Run with:
 
     python3 -m unittest discover -s tests -v
 """
