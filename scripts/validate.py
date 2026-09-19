@@ -18,9 +18,9 @@ Exit status:
         file, or no time zone database on this machine. Nothing is said about the file.
 
 Reason codes (the file is rejected whole, ADR 0006):
-    invalid-json                 not valid JSON
+    invalid-json                 not valid JSON (this includes an object with the same key twice)
     unknown-schema-version       `schemaVersion` is not 1 (nothing else is checked)
-    malformed-structure          a required member is missing, or has the wrong type or kind
+    malformed-structure          a required member is missing or null, or has the wrong type or kind
     checksum-missing             no `checksum` member
     checksum-wrong               the checksum line is malformed or does not match the bytes
     duplicate-id                 two Games, or two rule sets, share an id
@@ -90,10 +90,12 @@ def is_int(value):
 
 
 def is_object(value):
+    """A JSON object (Python dict)."""
     return isinstance(value, dict)
 
 
 def is_text(value):
+    """A JSON string."""
     return isinstance(value, str)
 
 
@@ -144,11 +146,24 @@ class Checker:
         self.add("malformed-structure", where, message)
 
     def require(self, obj, key, where):
-        """The member `key` of `obj`, or None (after recording it as missing)."""
-        if key not in obj:
-            self.malformed(f"{where}.{key}", "required member is missing")
+        """The member `key` of `obj`, or None after recording it as missing. A member that is
+        present but null counts as missing: no required member may be null."""
+        if obj.get(key) is None:
+            self.malformed(f"{where}.{key}", "required member is missing (or null)")
             return None
         return obj[key]
+
+    def non_empty_text(self, value, where):
+        """Record a malformed-structure finding unless `value` is text with something in it."""
+        if not (is_text(value) and value):
+            self.malformed(where, "must be non-empty text")
+
+    def whole_number(self, value, where):
+        """A whole number of at least 0. Returns True if fine, else records it and returns False."""
+        if is_int(value) and value >= 0:
+            return True
+        self.malformed(where, "must be a whole number of at least 0")
+        return False
 
     def date(self, value, where):
         """Record a bad-date finding unless `value` is a real YYYY-MM-DD date. Returns True if fine."""
@@ -188,6 +203,7 @@ class Checker:
             self.check_game(game, f"games[{index}]")
 
     def check_game(self, game, where):
+        """Check one Game and all its rule sets, and that rule sets are listed in rising order."""
         if not is_object(game):
             self.malformed(where, "a Game must be an object")
             return
@@ -205,8 +221,8 @@ class Checker:
                 self.game_ids.add(game_id)
 
         name = self.require(game, "name", where)
-        if name is not None and (not is_text(name) or not name):
-            self.malformed(f"{where}.name", "must be non-empty text")
+        if name is not None:
+            self.non_empty_text(name, f"{where}.name")
 
         currency = self.require(game, "currency", where)
         if currency is not None and not (is_text(currency) and CURRENCY.fullmatch(currency)):
@@ -220,7 +236,7 @@ class Checker:
         if game.get("endsAfter") is not None:
             self.date(game["endsAfter"], f"{where}.endsAfter")
 
-        self.check_ball_schemes(game.get("ballSchemes"), f"{where}.ballSchemes", "ballSchemes" in game)
+        self.check_ball_schemes(self.require(game, "ballSchemes", where), f"{where}.ballSchemes")
 
         rule_sets = self.require(game, "ruleSets", where)
         if rule_sets is None:
@@ -241,10 +257,9 @@ class Checker:
                          "effectiveFrom rising (a correction keeps the date and raises the revision)")
             previous_key = key
 
-    def check_ball_schemes(self, schemes, where, present):
+    def check_ball_schemes(self, schemes, where):
         """Ball colour ranges. Colour names are not checked: an unknown one just shows grey."""
-        if not present:
-            self.malformed(where, "required member is missing")
+        if schemes is None:
             return
         if not is_object(schemes) or "main" not in schemes:
             self.malformed(where, "must be an object with at least a 'main' list")
@@ -260,8 +275,8 @@ class Checker:
                     continue
                 for member in ("from", "to"):
                     value = self.require(entry, member, here)
-                    if value is not None and not (is_int(value) and value >= 0):
-                        self.malformed(f"{here}.{member}", "must be a whole number of at least 0")
+                    if value is not None:
+                        self.whole_number(value, f"{here}.{member}")
                 color = self.require(entry, "color", here)
                 if color is not None and not is_text(color):
                     self.malformed(f"{here}.color", "must be text")
@@ -319,6 +334,7 @@ class Checker:
         return (effective_from, int(revision)) if date_ok else None
 
     def check_draws(self, draws, where):
+        """Each draw day needs a weekday (mon..sun) and cut-off, live and results times (HH:mm)."""
         if draws is None:
             return
         if not isinstance(draws, list) or not draws:
@@ -338,14 +354,15 @@ class Checker:
                     self.add("bad-time", f"{here}.{member}", f"{value!r} is not a time written HH:mm (00:00 to 23:59)")
 
     def check_raffle(self, raffle, where):
+        """A raffle is null (none) or {"name": text, "everyDraw": true/false}."""
         if raffle is None:
             return
         if not is_object(raffle):
             self.malformed(where, "must be null or an object")
             return
         name = self.require(raffle, "name", where)
-        if name is not None and (not is_text(name) or not name):
-            self.malformed(f"{where}.name", "must be non-empty text")
+        if name is not None:
+            self.non_empty_text(name, f"{where}.name")
         every_draw = self.require(raffle, "everyDraw", where)
         if every_draw is not None and not isinstance(every_draw, bool):
             self.malformed(f"{where}.everyDraw", "must be true or false")
@@ -362,15 +379,14 @@ class Checker:
                 ok = False
             elif member == "count" and self.count(value, f"{where}.count") is None:
                 ok = False
-            elif member != "count" and not (is_int(value) and value >= 0):
-                self.malformed(f"{where}.{member}", "must be a whole number of at least 0")
+            elif member != "count" and not self.whole_number(value, f"{where}.{member}"):
                 ok = False
             else:
                 values[member] = value
         if need_name:
             name = self.require(number_set, "name", where)
-            if name is not None and (not is_text(name) or not name):
-                self.malformed(f"{where}.name", "must be non-empty text")
+            if name is not None:
+                self.non_empty_text(name, f"{where}.name")
         if not ok:
             return None
         if values["min"] > values["max"]:
@@ -451,6 +467,7 @@ class Checker:
             self.check_tier(tier, numbers, f"{where}[{index}]")
 
     def check_tier(self, tier, numbers, where):
+        """One prize tier: id, name, a match rule (judged against `numbers`) and a prize."""
         if not is_object(tier):
             self.malformed(where, "a prize tier must be an object")
             return
@@ -458,8 +475,8 @@ class Checker:
         if tier_id is not None and not (is_text(tier_id) and SLUG.fullmatch(tier_id)):
             self.add("bad-id", f"{where}.id", f"{tier_id!r} is not lowercase words joined by hyphens")
         name = self.require(tier, "name", where)
-        if name is not None and (not is_text(name) or not name):
-            self.malformed(f"{where}.name", "must be non-empty text")
+        if name is not None:
+            self.non_empty_text(name, f"{where}.name")
 
         match = self.require(tier, "match", where)
         if match is not None:
@@ -560,7 +577,16 @@ def parse(data):
     def refuse_constant(name):
         raise ValueError(f"{name} is not valid JSON")  # Python accepts NaN and Infinity; JSON does not
 
-    return json.loads(data.decode("utf-8"), parse_constant=refuse_constant)
+    def refuse_duplicate_keys(pairs):
+        # Python keeps the last of two equal keys; another parser may keep the first, so the
+        # two could read different prices from one file. Refuse the ambiguity outright.
+        keys = [key for key, _ in pairs]
+        for key in keys:
+            if keys.count(key) > 1:
+                raise ValueError(f"the key {key!r} appears twice in one object")
+        return dict(pairs)
+
+    return json.loads(data.decode("utf-8"), parse_constant=refuse_constant, object_pairs_hook=refuse_duplicate_keys)
 
 
 def rule_sets_by_id(doc):
@@ -614,6 +640,7 @@ def validate(data, base_doc=None):
 
 
 def read_bytes(path, what):
+    """The raw bytes of a file, or a SetupError naming `what` (e.g. "base file") if unreadable."""
     try:
         return Path(path).read_bytes()
     except OSError as err:

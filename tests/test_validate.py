@@ -1,6 +1,6 @@
 """Tests for scripts/validate.py, driven by the shared sample files.
 
-The seam is the command line: `validate.py FILE [--base OLDER]`, its exit status and the
+The seam (the boundary the tests go through) is the command line: `validate.py FILE [--base OLDER]`, its exit status and the
 reason codes on its output. Every file in tests/valid/ must be accepted and every file in
 tests/invalid/ must be rejected with exactly the code tests/expected.json names for it.
 
@@ -12,8 +12,10 @@ Layout conventions this file relies on:
   * `*.base.json` files are not samples in their own right, but each must itself be valid.
 """
 import json
+import re
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -93,11 +95,11 @@ class InvalidSamplesTests(unittest.TestCase):
     def test_expected_json_lists_every_invalid_sample_and_nothing_else(self):
         self.assertEqual(sorted(self.expected), [p.name for p in samples(INVALID)])
 
-    def test_every_rule_has_a_sample(self):
-        # The reason codes documented in tests/invalid/README.md are the full rule list.
+    def test_documented_reason_codes_and_sampled_reason_codes_are_the_same_list(self):
+        # Every rule in the README's table has a sample, and every sample's code is in the table.
         readme = (INVALID / "README.md").read_text()
-        for code in set(self.expected.values()):
-            self.assertIn(f"`{code}`", readme)
+        documented = set(re.findall(r"^\| `([a-z-]+)` \|", readme, flags=re.MULTILINE))
+        self.assertEqual(documented, set(self.expected.values()))
 
     def test_every_invalid_sample_is_rejected_for_exactly_its_reason(self):
         for name, code in self.expected.items():
@@ -139,7 +141,6 @@ class CommandLineTests(unittest.TestCase):
         broken["games"][0]["ruleSets"][0]["price"] = 1.5
         broken["games"][0]["timezone"] = "Nowhere/Land"
         # Rewriting the file broke its seal, so the checksum is wrong as well: three findings.
-        import tempfile
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "broken.json"
             path.write_text(json.dumps(broken, indent=2) + "\n")

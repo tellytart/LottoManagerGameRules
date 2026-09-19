@@ -17,9 +17,9 @@ Each file here breaks exactly one validation rule, and `scripts/validate.py` mus
 
 | Reason code | The rule it enforces |
 |---|---|
-| `invalid-json` | The file is not valid JSON |
+| `invalid-json` | The file is not valid JSON (an object with the same key twice counts: parsers disagree about which one wins) |
 | `unknown-schema-version` | `schemaVersion` is not 1 (nothing else in the file is checked) |
-| `malformed-structure` | A required member is missing, or has the wrong type, or is an unknown prize or extra `kind` |
+| `malformed-structure` | A required member is missing or `null`, or has the wrong type, or is an unknown prize or extra `kind` |
 | `checksum-missing` | There is no `checksum` member |
 | `checksum-wrong` | The checksum line is malformed, or does not match the file's raw bytes |
 | `duplicate-id` | Two Games, or two rule sets, have the same id |
