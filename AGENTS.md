@@ -31,4 +31,4 @@ See the table in `README.md`. Files under `scripts/`, `schema/`, `tests/` and `.
 
 ## Monthly check
 
-Follow `CHECKLIST.md`. Bump `checkedOn` even when nothing changed.
+Follow `CHECKLIST.md`. Bump `checkedOn` even when nothing changed. After any change to `v1/game-rules.json`, re-seal it and refresh its copy in `tests/valid/` (a test checks they match).

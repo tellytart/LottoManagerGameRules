@@ -8,6 +8,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The
 
 ### Added
 
+- **First rules file, `v1/game-rules.json`** (checked 2026-09-19 against the figures researched that day, see CHECKLIST.md for the sources), one current rule set per game:
+  - Lotto, `lotto-2026-06-10-r1`, effective 2026-06-10: £2.00, two Rounds, Wed and Sat, Match 6 jackpot (manager types it) down to Match 2, Guaranteed Millionaire Raffle.
+  - EuroMillions, `euromillions-2025-07-28-r1`, effective 2025-07-28: £2.50, Tue and Fri, 13 tiers all typed by the manager, UK Millionaire Maker raffle.
+  - Thunderball, `thunderball-2024-02-01-r1`, effective 2024-02-01: £1.00, Tue, Wed, Fri and Sat, nine fixed tiers.
+  - Set For Life, `set-for-life-2025-07-28-r1`, effective 2025-07-28: £1.50, Mon and Thu, eight tiers: six fixed cash and two monthly-instalment prizes (£10,000 a month for 360 and for 12 months).
+- `tests/test_rules_file.py`: the real file passes `validate.py` and the seal check, has the four games, and matches its copy `tests/valid/current-game-rules.json`.
 - `.github/workflows/validate.yml` (job **Validate**), the pull-request gate, replacing the stopgap `tests.yml`: on `pull_request` only, read-only token, actions pinned to commit SHAs, Python 3.12. It checks out the pull request and the base commit, runs the schema check, the checksum check and `validate.py` with the base copy of the rules file, then the unit tests. The rules-file steps are skipped, with a notice, until `v1/game-rules.json` exists, and fail a pull request that deletes it once it does.
 - `scripts/check_schema.py FILE`: checks a rules file against the JSON Schema (`REJECT schema <where>: <message>`, exit 1; exit 2 if it could not run), reading the file with `validate.py`'s parser so both agree on what valid JSON is. Tests in `tests/test_check_schema.py`.
 - `scripts/validate.py FILE [--base OLDER]`: every rejection and degrade rule of the format spec, with a stable machine-readable reason code per rule (`REJECT <code> <where>: <message>`, exit 1; exit 2 if it could not run). `--base` also rejects a file in which a rule set already in the older copy changed or vanished. Standard library only.

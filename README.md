@@ -14,13 +14,13 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 
 | Path | What it is |
 |---|---|
-| `v1/game-rules.json` | The file the app fetches (added by a later change) |
+| `v1/game-rules.json` | The file the app fetches: Lotto, EuroMillions, Thunderball and Set For Life, one current rule set each |
 | `schema/game-rules-v1.schema.json` | JSON Schema for the file's shape, so editors and CI flag mistakes |
 | `scripts/seal.py` | Writes (`seal.py FILE`) or verifies (`seal.py --check FILE`) the checksum on the file's last line |
 | `scripts/validate.py` | The full validation rules: `validate.py FILE [--base OLDER]` exits 1 with a stable reason code per broken rule (see `tests/invalid/README.md`); `--base` also checks that no published rule set changed |
-| `tests/valid/`, `tests/invalid/`, `tests/expected.json` | Sample files (one invalid sample per rule, mapped to its reason code in `expected.json`), shared with the app's own validator so the two stay in step |
+| `tests/valid/`, `tests/invalid/`, `tests/expected.json` | Sample files (`tests/valid/current-game-rules.json` is a byte-for-byte copy of the real file, kept in step by a test) (one invalid sample per rule, mapped to its reason code in `expected.json`), shared with the app's own validator so the two stay in step |
 | `scripts/check_schema.py` | Checks a rules file against the JSON Schema: `check_schema.py FILE` (needs `jsonschema`) |
-| `tests/test_*.py` | Unit tests for the scripts and the schema |
+| `tests/test_*.py` | Unit tests for the scripts, the schema and the real rules file (`test_rules_file.py`) |
 | `.github/workflows/validate.yml` | CI, the pull-request gate (job **Validate**): on every pull request, the schema check, the checksum check and `validate.py` against the base branch's copy of the rules file (skipped while `v1/game-rules.json` does not exist yet), then the unit tests |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
