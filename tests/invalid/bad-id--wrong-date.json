@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-09-19",
+  "games": [
+    {
+      "id": "lotto",
+      "name": "Lotto",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "endsAfter": null,
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 9,
+            "color": "white"
+          },
+          {
+            "from": 10,
+            "to": 19,
+            "color": "blue"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "lotto-2026-06-11-r1",
+          "effectiveFrom": "2026-06-10",
+          "price": 200,
+          "rounds": 2,
+          "claimDays": 180,
+          "draws": [
+            {
+              "weekday": "wed",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 6,
+              "min": 1,
+              "max": 59
+            },
+            "extras": [
+              {
+                "kind": "bonusBall",
+                "count": 1
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "Jackpot",
+              "match": {
+                "main": 6
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-5-bonus",
+              "name": "Match 5 + Bonus Ball",
+              "match": {
+                "main": 5,
+                "bonusBall": true
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 100000000
+              }
+            },
+            {
+              "id": "match-3",
+              "name": "Match 3",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 1000
+              }
+            }
+          ],
+          "raffle": {
+            "name": "Guaranteed Millionaire Raffle",
+            "everyDraw": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "euromillions",
+      "name": "EuroMillions",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 50,
+            "color": "blue"
+          }
+        ],
+        "Lucky Stars": [
+          {
+            "from": 1,
+            "to": 12,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "euromillions-2025-07-28-r1",
+          "effectiveFrom": "2025-07-28",
+          "price": 250,
+          "rounds": 1,
+          "draws": [
+            {
+              "weekday": "tue",
+              "cutOff": "19:30",
+              "live": "20:15",
+              "results": "21:00"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 50
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Lucky Stars",
+                "count": 2,
+                "min": 1,
+                "max": 12
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "5 + 2 Lucky Stars",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            }
+          ],
+          "raffle": {
+            "name": "UK Millionaire Maker",
+            "everyDraw": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "set-for-life",
+      "name": "Set For Life",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 47,
+            "color": "purple"
+          }
+        ],
+        "Life Ball": [
+          {
+            "from": 1,
+            "to": 10,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "set-for-life-2025-07-28-r1",
+          "effectiveFrom": "2025-07-28",
+          "price": 150,
+          "rounds": 1,
+          "draws": [
+            {
+              "weekday": "mon",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "20:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 47
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Life Ball",
+                "count": 1,
+                "min": 1,
+                "max": 10
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "5-life-ball",
+              "name": "5 + Life Ball",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Life Ball": 1
+                }
+              },
+              "prize": {
+                "kind": "instalments",
+                "amount": 1000000,
+                "count": 360,
+                "everyMonths": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thunderball",
+      "name": "Thunderball",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 39,
+            "color": "blue"
+          }
+        ],
+        "Thunderball": [
+          {
+            "from": 1,
+            "to": 14,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "thunderball-2025-07-28-r1",
+          "effectiveFrom": "2025-07-28",
+          "price": 180,
+          "rounds": 1,
+          "draws": [
+            {
+              "weekday": "wed",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "20:45"
+            },
+            {
+              "weekday": "fri",
+              "cutOff": "19:30",
+              "live": "20:15",
+              "results": "21:00"
+            },
+            {
+              "weekday": "sat",
+              "cutOff": "19:30",
+              "live": "20:15",
+              "results": "21:15"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 39
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Thunderball",
+                "count": 1,
+                "min": 1,
+                "max": 14
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "5-thunderball",
+              "name": "5 + Thunderball",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 50000000
+              }
+            },
+            {
+              "id": "match-5",
+              "name": "Match 5",
+              "match": {
+                "main": 5
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 500000
+              }
+            },
+            {
+              "id": "thunderball-only",
+              "name": "Thunderball only",
+              "match": {
+                "main": 0,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 300
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "checksum": "sha256:ee493f14a064b45cf1e5853e0e6adbb09c17938985d7bdd5a9cd1ee17dca786e"
+}

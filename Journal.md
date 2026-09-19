@@ -6,20 +6,20 @@ A living, plain-English notebook for this repo, written for a smart friend rathe
 
 Imagine the LottoManager app as a shop that needs today's price list on the door. Lottery prices, draw days and prize tiers do change (Lotto gained a second Round on 7 June 2026), and nobody wants to wait for an App Store release to update a sign. This repo is that price list: one small JSON file the app fetches over the internet, plus the tooling that stops a typo from ever reaching the door.
 
-Right now the repo is just a skeleton. The rules file itself, the validator and the CI arrive in later steps.
+Right now the repo has the tooling (schema, seal script, validator, sample files) but not yet the rules file itself or the full CI.
 
 ## 2. Architecture Deep Dive
 
 There is almost no architecture, which is the point. Think of a noticeboard with a strict clerk:
 
 - **The file** (`v1/game-rules.json`) is the notice. Games, each with frozen, versioned *rule sets*.
-- **The seal** (`scripts/seal.py`, later) is a wax stamp: a SHA-256 checksum on the file's last line, so a half-downloaded file is rejected instead of trusted.
-- **The clerk** (`scripts/validate.py` and CI, later) refuses any notice that breaks the rules, including quietly editing one already published.
+- **The seal** (`scripts/seal.py`) is a wax stamp: a SHA-256 checksum on the file's last line, so a half-downloaded file is rejected instead of trusted.
+- **The clerk** (`scripts/validate.py`, with CI to come) refuses any notice that breaks the rules, including quietly editing one already published.
 - **`checkedOn`** is a "last verified" sticker, bumped every month even when nothing changed.
 
 ## 3. The Codebase Map
 
-`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. Most of these folders are empty placeholders (`.gitkeep`) today.
+`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. `v1/` is still an empty placeholder until the rules file lands.
 
 ## 4. Tech Stack & Why
 
@@ -28,6 +28,18 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 - **Major version in the path (`v1/`)**: a breaking format change adds `v2/` and old apps keep getting ordinary rule updates.
 
 ## 5. The Journey
+
+### 2026-09-19: The validator and the shared samples
+
+- Added `scripts/validate.py` and the sample files. Think of the samples as the clerk's exam paper: one deliberately broken notice per rule, each with the answer (the reason code) written in `tests/expected.json`. The app's own validator sits the same exam, so the two cannot quietly disagree.
+- **Decision:** the validator hand-checks the file's shape instead of using `jsonschema`, so it runs with only the standard library (like `seal.py`) and reports the *same reason codes* the app will use. The schema stays for editors, and a test checks that every valid sample also satisfies it.
+- **Decision:** it lists every problem, not just the first, but each invalid sample breaks exactly one rule and the test demands exactly that one code, so a check that over-reports fails the tests.
+- **Decision (spec was silent, "ambiguity 12"):** a prize tier "cannot match" if it needs more main numbers than are drawn, more of an extra set than it draws, a Bonus Ball the game does not have, or a Bonus Ball together with *all* the main numbers (nothing is left to match it with). Shadowed tiers are not checked. Written up in `tests/invalid/README.md`; the app repo's spec still needs the same words (see the issue's note).
+- **Gotcha:** the spec says `effectiveFrom` must be "strictly rising" *and* that a correction keeps the same date with a higher revision. Both are true only if rule sets are ordered by (date, revision), so that is the rule.
+- **Gotcha:** Python's `True == 1` and `200 == 200.0`, so the amount check refuses booleans and any decimal point (`200.0` is rejected), and the held-rule-set comparison uses a canonical text form so `200` and `200.0` count as different.
+- **Gotcha:** a Game in an unsupported currency is skipped by the app, but the validator still checks it fully, so a typo in it cannot hide until the day the app supports that currency.
+- **Gotcha:** JSON does not allow `NaN`, but Python's parser accepts it, so the parser is told to refuse it.
+- Samples are generated once and then hand-maintained: edit, then run `seal.py` on the file. The real games' numbers in them are illustrative; issue #5 supplies the real file.
 
 ### 2026-09-19: Schema and seal script
 
