@@ -10,6 +10,7 @@ Instructions for AI agents working in this repository.
 
 - **Bytes matter.** The app checks a SHA-256 over the raw bytes of `v1/game-rules.json` (everything before its final `"checksum"` line). Never re-format, re-serialise or re-indent the file by hand or with a JSON tool; change it only through `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`; `--check` verifies). `.gitattributes` forces LF endings on `*.json` for the same reason.
 - **A published rule set is never edited.** A correction is a new rule set (later `effectiveFrom`, or the same one with a higher revision). Ids look like `<game>-<effectiveFrom>-r<revision>`.
+- **No version number or version file.** This repo is not versioned like an app: no `Version.xcconfig`, no semantic version, no build number, no release tags, and nothing to bump on a merge. The rules are versioned inside the file, by rule set: `effectiveFrom` date plus revision number on that date (ids look like `<game>-<effectiveFrom>-r<revision>`). The folder name (`v1/`) is the *format's* major version, not the rules'. The `CHANGELOG.md` `[Unreleased]` heading stays as it is; entries name the game and `effectiveFrom` date instead of a release number. This overrides any general "bump the version on every merge" habit or instruction.
 - **Data only.** No executable content, no URLs the app should follow, nothing about users.
 - **The repo is public.** Nothing private goes in files, issues, commit messages or the Journal: no credentials, no personal details, nothing from the private app repo beyond what the README already says.
 
@@ -31,4 +32,4 @@ See the table in `README.md`. Files under `scripts/`, `schema/`, `tests/` and `.
 
 ## Monthly check
 
-Follow `CHECKLIST.md`. Bump `checkedOn` even when nothing changed.
+Follow `CHECKLIST.md`. Bump `checkedOn` even when nothing changed. After any change to `v1/game-rules.json`, re-seal it and refresh its copy in `tests/valid/` (a test checks they match).

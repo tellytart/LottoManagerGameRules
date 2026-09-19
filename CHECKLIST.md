@@ -33,5 +33,6 @@ Bump `checkedOn` to today's date, run the checks below, add a `CHANGELOG.md` lin
 ## 4. Check and publish
 
 1. `python3 scripts/seal.py v1/game-rules.json` to write the checksum on the last line (`--check` verifies it).
-2. `python3 scripts/validate.py` to run the full validation rules, including "no already-published rule set changed" (added by later work).
-3. Open a pull request; the validation workflow must pass. Merge with squash or rebase (the branch keeps a linear history).
+2. `python3 scripts/validate.py v1/game-rules.json --base <copy of the file on main>` to run the full validation rules, including "no already-published rule set changed" (`git show main:v1/game-rules.json > /tmp/base.json` makes the copy).
+3. `cp v1/game-rules.json tests/valid/current-game-rules.json`, so the shared sample stays identical (a unit test fails if it is not), then `python3 -m unittest discover -s tests`.
+4. Open a pull request; the validation workflow must pass. Merge with squash or rebase (the branch keeps a linear history).

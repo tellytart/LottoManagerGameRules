@@ -6,7 +6,7 @@ A living, plain-English notebook for this repo, written for a smart friend rathe
 
 Imagine the LottoManager app as a shop that needs today's price list on the door. Lottery prices, draw days and prize tiers do change (Lotto gained a second Round on 7 June 2026), and nobody wants to wait for an App Store release to update a sign. This repo is that price list: one small JSON file the app fetches over the internet, plus the tooling that stops a typo from ever reaching the door.
 
-Right now the repo has the tooling (schema, seal script, validator, sample files) and the pull-request gate (CI), but not yet the rules file itself.
+Right now the repo has the tooling (schema, seal script, validator, sample files) the pull-request gate (CI) and the first rules file.
 
 ## 2. Architecture Deep Dive
 
@@ -19,7 +19,7 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 3. The Codebase Map
 
-`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. `v1/` is still an empty placeholder until the rules file lands. `.github/workflows/validate.yml` is the CI gate.
+`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. `v1/game-rules.json` is the notice itself. `.github/workflows/validate.yml` is the CI gate.
 
 ## 4. Tech Stack & Why
 
@@ -28,6 +28,17 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 - **Major version in the path (`v1/`)**: a breaking format change adds `v2/` and old apps keep getting ordinary rule updates.
 
 ## 5. The Journey
+
+### 2026-09-19: The first rules file
+
+- **Decision (Richard):** this repo has no version number, version file, build number or release tags. The rules are versioned inside the file by rule set (`effectiveFrom` date plus revision on that date), so a repo-level version would say nothing extra. Written into AGENTS.md and README.
+- Wrote `v1/game-rules.json` with the four games and sealed it. It passes `validate.py`, the schema check and the unit tests locally; the first time CI's rules-file steps run for real is on this change.
+- **Gotcha (the ticket was wrong):** issue #5 said Set For Life has "seven fixed tiers plus two instalments" (nine). The research's own table lists eight rows: six fixed and two instalments. Rather than guess, the odds point the same way: the published "any prize" figure (1 in 12.4) matches, to that precision, the summed odds of those eight tiers, and a ninth tier (say "1 + Life Ball") would make it about 1 in 8.5. The file has eight tiers. The same check gave 1 in 13 for EuroMillions' 13 tiers and 1 in 4.9 for Lotto over both Rounds. Thunderball's nine tiers give 1 in 12.4 where the research says 1 in 13; every one of its tiers' own odds matches the research, so the tier list looks right and the "13" may be an error in the note, but 12.38 does not round to 13: check the official page. Because the research document itself says both nine and eight for Set For Life, the official page is also the tiebreak for that game's tier count.
+- **Decision:** `effectiveFrom` is the effective date of the operator's current edition (EuroMillions 2025-07-28, Thunderball 2024-02-01), and for Set For Life the later of its two documents (procedures 2024-02-01, instalment rules 2025-07-28), because the instalment prizes only exist in the file as the newer edition describes them. A draw on or after that date uses the set, which is all that matters today. (These dates are not always a draw day, e.g. 2025-07-28 was a Monday and EuroMillions draws Tue/Fri; harmless, because the app picks the latest `effectiveFrom` on or before the draw date.)
+- **Decision:** tier lists run highest first, in the order the operator's tables give them, because a line takes the first tier it satisfies. For EuroMillions that order is by rarity, not prize (e.g. `4 + 1` before `3 + 2` before `4`).
+- **Decision:** ball colours for Lotto follow the app's existing scheme; for the other three games the sources give none, so each number set has one colour (blue numbers, gold extra ball; purple for Set For Life). The app uses its own colours, so this is cosmetic.
+- **Decision:** the real file is copied to `tests/valid/current-game-rules.json` as the ticket asked (so the app's tests run against it), and a test fails if the copy drifts. The price is one extra `cp` at every monthly check (in `CHECKLIST.md`).
+- The file was generated once by a throwaway script and is now hand-maintained: edit, run `seal.py`, refresh the copy.
 
 ### 2026-09-19: The CI workflow and the pull-request gate
 

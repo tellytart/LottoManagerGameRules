@@ -1,0 +1,744 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-09-19",
+  "games": [
+    {
+      "id": "lotto",
+      "name": "Lotto",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "endsAfter": null,
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 9,
+            "color": "white"
+          },
+          {
+            "from": 10,
+            "to": 19,
+            "color": "blue"
+          },
+          {
+            "from": 20,
+            "to": 29,
+            "color": "pink"
+          },
+          {
+            "from": 30,
+            "to": 39,
+            "color": "green"
+          },
+          {
+            "from": 40,
+            "to": 49,
+            "color": "yellow"
+          },
+          {
+            "from": 50,
+            "to": 59,
+            "color": "purple"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "lotto-2026-06-10-r1",
+          "effectiveFrom": "2026-06-10",
+          "price": 200,
+          "rounds": 2,
+          "claimDays": 180,
+          "draws": [
+            {
+              "weekday": "wed",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            },
+            {
+              "weekday": "sat",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 6,
+              "min": 1,
+              "max": 59
+            },
+            "extras": [
+              {
+                "kind": "bonusBall",
+                "count": 1
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "Jackpot",
+              "match": {
+                "main": 6
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-5-bonus-ball",
+              "name": "Match 5 + Bonus Ball",
+              "match": {
+                "main": 5,
+                "bonusBall": true
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 100000000
+              }
+            },
+            {
+              "id": "match-5",
+              "name": "Match 5",
+              "match": {
+                "main": 5
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 100000
+              }
+            },
+            {
+              "id": "match-4",
+              "name": "Match 4",
+              "match": {
+                "main": 4
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 5000
+              }
+            },
+            {
+              "id": "match-3",
+              "name": "Match 3",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 1000
+              }
+            },
+            {
+              "id": "match-2",
+              "name": "Match 2",
+              "match": {
+                "main": 2
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 100
+              }
+            }
+          ],
+          "raffle": {
+            "name": "Guaranteed Millionaire Raffle",
+            "everyDraw": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "euromillions",
+      "name": "EuroMillions",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "endsAfter": null,
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 50,
+            "color": "blue"
+          }
+        ],
+        "Lucky Stars": [
+          {
+            "from": 1,
+            "to": 12,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "euromillions-2025-07-28-r1",
+          "effectiveFrom": "2025-07-28",
+          "price": 250,
+          "rounds": 1,
+          "claimDays": 180,
+          "draws": [
+            {
+              "weekday": "tue",
+              "cutOff": "19:30",
+              "live": "20:45",
+              "results": "21:30"
+            },
+            {
+              "weekday": "fri",
+              "cutOff": "19:30",
+              "live": "20:45",
+              "results": "21:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 50
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Lucky Stars",
+                "count": 2,
+                "min": 1,
+                "max": 12
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "Jackpot (5 + 2 Lucky Stars)",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-5-1-lucky-star",
+              "name": "Match 5 + 1 Lucky Star",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Lucky Stars": 1
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-5",
+              "name": "Match 5",
+              "match": {
+                "main": 5
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-4-2-lucky-stars",
+              "name": "Match 4 + 2 Lucky Stars",
+              "match": {
+                "main": 4,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-4-1-lucky-star",
+              "name": "Match 4 + 1 Lucky Star",
+              "match": {
+                "main": 4,
+                "extras": {
+                  "Lucky Stars": 1
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-3-2-lucky-stars",
+              "name": "Match 3 + 2 Lucky Stars",
+              "match": {
+                "main": 3,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-4",
+              "name": "Match 4",
+              "match": {
+                "main": 4
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-2-2-lucky-stars",
+              "name": "Match 2 + 2 Lucky Stars",
+              "match": {
+                "main": 2,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-3-1-lucky-star",
+              "name": "Match 3 + 1 Lucky Star",
+              "match": {
+                "main": 3,
+                "extras": {
+                  "Lucky Stars": 1
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-3",
+              "name": "Match 3",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-1-2-lucky-stars",
+              "name": "Match 1 + 2 Lucky Stars",
+              "match": {
+                "main": 1,
+                "extras": {
+                  "Lucky Stars": 2
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-2-1-lucky-star",
+              "name": "Match 2 + 1 Lucky Star",
+              "match": {
+                "main": 2,
+                "extras": {
+                  "Lucky Stars": 1
+                }
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            },
+            {
+              "id": "match-2",
+              "name": "Match 2",
+              "match": {
+                "main": 2
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            }
+          ],
+          "raffle": {
+            "name": "UK Millionaire Maker",
+            "everyDraw": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "thunderball",
+      "name": "Thunderball",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "endsAfter": null,
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 39,
+            "color": "blue"
+          }
+        ],
+        "Thunderball": [
+          {
+            "from": 1,
+            "to": 14,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "thunderball-2024-02-01-r1",
+          "effectiveFrom": "2024-02-01",
+          "price": 100,
+          "rounds": 1,
+          "claimDays": 180,
+          "draws": [
+            {
+              "weekday": "tue",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            },
+            {
+              "weekday": "wed",
+              "cutOff": "19:30",
+              "live": "20:15",
+              "results": "21:30"
+            },
+            {
+              "weekday": "fri",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            },
+            {
+              "weekday": "sat",
+              "cutOff": "19:30",
+              "live": "20:15",
+              "results": "21:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 39
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Thunderball",
+                "count": 1,
+                "min": 1,
+                "max": 14
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "match-5-1-thunderball",
+              "name": "Match 5 + 1 Thunderball",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 50000000
+              }
+            },
+            {
+              "id": "match-5",
+              "name": "Match 5",
+              "match": {
+                "main": 5
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 500000
+              }
+            },
+            {
+              "id": "match-4-1-thunderball",
+              "name": "Match 4 + 1 Thunderball",
+              "match": {
+                "main": 4,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 25000
+              }
+            },
+            {
+              "id": "match-4",
+              "name": "Match 4",
+              "match": {
+                "main": 4
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 10000
+              }
+            },
+            {
+              "id": "match-3-1-thunderball",
+              "name": "Match 3 + 1 Thunderball",
+              "match": {
+                "main": 3,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 2000
+              }
+            },
+            {
+              "id": "match-3",
+              "name": "Match 3",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 1000
+              }
+            },
+            {
+              "id": "match-2-1-thunderball",
+              "name": "Match 2 + 1 Thunderball",
+              "match": {
+                "main": 2,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 1000
+              }
+            },
+            {
+              "id": "match-1-1-thunderball",
+              "name": "Match 1 + 1 Thunderball",
+              "match": {
+                "main": 1,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 500
+              }
+            },
+            {
+              "id": "thunderball-only",
+              "name": "Thunderball only",
+              "match": {
+                "main": 0,
+                "extras": {
+                  "Thunderball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 300
+              }
+            }
+          ],
+          "raffle": null
+        }
+      ]
+    },
+    {
+      "id": "set-for-life",
+      "name": "Set For Life",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "endsAfter": null,
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 47,
+            "color": "purple"
+          }
+        ],
+        "Life Ball": [
+          {
+            "from": 1,
+            "to": 10,
+            "color": "gold"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "set-for-life-2025-07-28-r1",
+          "effectiveFrom": "2025-07-28",
+          "price": 150,
+          "rounds": 1,
+          "claimDays": 180,
+          "draws": [
+            {
+              "weekday": "mon",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            },
+            {
+              "weekday": "thu",
+              "cutOff": "19:30",
+              "live": "20:00",
+              "results": "21:30"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 5,
+              "min": 1,
+              "max": 47
+            },
+            "extras": [
+              {
+                "kind": "separateSet",
+                "name": "Life Ball",
+                "count": 1,
+                "min": 1,
+                "max": 10
+              }
+            ]
+          },
+          "tiers": [
+            {
+              "id": "match-5-1-life-ball",
+              "name": "Match 5 + 1 Life Ball",
+              "match": {
+                "main": 5,
+                "extras": {
+                  "Life Ball": 1
+                }
+              },
+              "prize": {
+                "kind": "instalments",
+                "amount": 1000000,
+                "count": 360,
+                "everyMonths": 1
+              }
+            },
+            {
+              "id": "match-5",
+              "name": "Match 5",
+              "match": {
+                "main": 5
+              },
+              "prize": {
+                "kind": "instalments",
+                "amount": 1000000,
+                "count": 12,
+                "everyMonths": 1
+              }
+            },
+            {
+              "id": "match-4-1-life-ball",
+              "name": "Match 4 + 1 Life Ball",
+              "match": {
+                "main": 4,
+                "extras": {
+                  "Life Ball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 25000
+              }
+            },
+            {
+              "id": "match-4",
+              "name": "Match 4",
+              "match": {
+                "main": 4
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 5000
+              }
+            },
+            {
+              "id": "match-3-1-life-ball",
+              "name": "Match 3 + 1 Life Ball",
+              "match": {
+                "main": 3,
+                "extras": {
+                  "Life Ball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 3000
+              }
+            },
+            {
+              "id": "match-3",
+              "name": "Match 3",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 2000
+              }
+            },
+            {
+              "id": "match-2-1-life-ball",
+              "name": "Match 2 + 1 Life Ball",
+              "match": {
+                "main": 2,
+                "extras": {
+                  "Life Ball": 1
+                }
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 1000
+              }
+            },
+            {
+              "id": "match-2",
+              "name": "Match 2",
+              "match": {
+                "main": 2
+              },
+              "prize": {
+                "kind": "fixed",
+                "amount": 500
+              }
+            }
+          ],
+          "raffle": null
+        }
+      ]
+    }
+  ],
+  "checksum": "sha256:9fa0761694cafaf88ba43a13a902669f1b7cd81fec9d679fc026da870b335759"
+}
