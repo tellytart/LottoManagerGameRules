@@ -19,8 +19,9 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 | `scripts/seal.py` | Writes (`seal.py FILE`) or verifies (`seal.py --check FILE`) the checksum on the file's last line |
 | `scripts/validate.py` | The full validation rules: `validate.py FILE [--base OLDER]` exits 1 with a stable reason code per broken rule (see `tests/invalid/README.md`); `--base` also checks that no published rule set changed |
 | `tests/valid/`, `tests/invalid/`, `tests/expected.json` | Sample files (one invalid sample per rule, mapped to its reason code in `expected.json`), shared with the app's own validator so the two stay in step |
+| `scripts/check_schema.py` | Checks a rules file against the JSON Schema: `check_schema.py FILE` (needs `jsonschema`) |
 | `tests/test_*.py` | Unit tests for the scripts and the schema |
-| `.github/workflows/` | CI: `tests.yml` runs the unit tests (including every sample file) on every pull request; the full validation workflow comes later |
+| `.github/workflows/validate.yml` | CI, the pull-request gate (job **Validate**): on every pull request, the schema check, the checksum check and `validate.py` against the base branch's copy of the rules file (skipped while `v1/game-rules.json` does not exist yet), then the unit tests |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
 
@@ -28,7 +29,8 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 
 - A published rule set is never edited. A correction is a new rule set: a later `effectiveFrom`, or the same one with a higher revision.
 - Changes go in by pull request. The plan is for `main` to be protected and keep a **linear history**, so merge with **squash** or **rebase**, not a merge commit.
-- The file ends with a checksum line written by `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`), and a pull request with a wrong checksum will fail a validation check. The check arrives with later work; until the branch protection is switched on and that workflow has run once, nothing enforces them.
+- The file ends with a checksum line written by `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`), and a pull request with a wrong checksum fails the **Validate** check. That check only blocks a merge once it is listed as a required status check in the `main` ruleset (which can only be done after the workflow has run once), together with "up to date before merging"; until then it reports a result but does not enforce it.
+- **Read changes to `scripts/`, `schema/`, `tests/` and `.github/` before merging them.** The workflow runs the pull request's *own* copy of them (that is how a change to a check gets tested), so a pull request can weaken the very check that is judging it. Only the rules file is compared against the base branch.
 - `.gitattributes` forces LF line endings on `*.json`, because the checksum covers the raw bytes.
 
 The format is specified in the LottoManager project's `docs/game-rules-file.md` (that repository is currently private, so the link may not open for you).
