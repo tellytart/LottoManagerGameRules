@@ -27,6 +27,8 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 
 ## Changing the rules
 
+There is no version number or version file for this repo. The rules are versioned inside the file: each rule set has an `effectiveFrom` date and a revision number on that date. The `v1` in the path is the *format's* major version.
+
 - A published rule set is never edited. A correction is a new rule set: a later `effectiveFrom`, or the same one with a higher revision.
 - Changes go in by pull request. The plan is for `main` to be protected and keep a **linear history**, so merge with **squash** or **rebase**, not a merge commit.
 - The file ends with a checksum line written by `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`), and a pull request with a wrong checksum fails the **Validate** check. That check only blocks a merge once it is listed as a required status check in the `main` ruleset (which can only be done after the workflow has run once), together with "up to date before merging"; until then it reports a result but does not enforce it.
