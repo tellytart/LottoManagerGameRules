@@ -6,7 +6,7 @@ A living, plain-English notebook for this repo, written for a smart friend rathe
 
 Imagine the LottoManager app as a shop that needs today's price list on the door. Lottery prices, draw days and prize tiers do change (Lotto gained a second Round on 7 June 2026), and nobody wants to wait for an App Store release to update a sign. This repo is that price list: one small JSON file the app fetches over the internet, plus the tooling that stops a typo from ever reaching the door.
 
-Right now the repo has the tooling (schema, seal script, validator, sample files) but not yet the rules file itself or the full CI.
+Right now the repo has the tooling (schema, seal script, validator, sample files) and the pull-request gate (CI), but not yet the rules file itself.
 
 ## 2. Architecture Deep Dive
 
@@ -19,7 +19,7 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 3. The Codebase Map
 
-`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. `v1/` is still an empty placeholder until the rules file lands.
+`README.md` has the layout table. In short: `v1/` the file, `schema/` its JSON Schema, `scripts/` the seal and validator, `tests/valid` and `tests/invalid` sample files shared with the app, `.github/workflows/` CI, `CHECKLIST.md` the monthly check. `v1/` is still an empty placeholder until the rules file lands. `.github/workflows/validate.yml` is the CI gate.
 
 ## 4. Tech Stack & Why
 
@@ -28,6 +28,15 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 - **Major version in the path (`v1/`)**: a breaking format change adds `v2/` and old apps keep getting ordinary rule updates.
 
 ## 5. The Journey
+
+### 2026-09-19: The CI workflow and the pull-request gate
+
+- Added `.github/workflows/validate.yml` and replaced the stopgap `tests.yml` with it (two workflows running the same unit tests would just be noise). Think of it as the clerk's desk at the front door: nothing reaches `main` without passing the same checks you can run by hand.
+- **Decision:** a new `scripts/check_schema.py` runs the schema check, rather than an inline `python -c` in the workflow, so it is testable and runs the same locally. It parses the file with `validate.py`'s own parser, so both scripts agree on what valid JSON is.
+- **Gotcha:** `v1/game-rules.json` does not exist until issue #5, so the workflow skips the rules-file steps with a notice instead of failing on a missing file. Once the file is on the base branch, a pull request that deletes it fails (otherwise deleting the file would be a way past every check).
+- **Gotcha:** the workflow runs the pull request's *own* `scripts/`, so a pull request could weaken the check that judges it. Only the rules file is compared with the base branch. The defence is human: read changes to `scripts/`, `schema/`, `tests/` and `.github/` before merging (written in README and AGENTS.md).
+- **Gotcha:** the job's name (`Validate`) is what the ruleset lists as the required check, and it can only be picked after the workflow has run once. Renaming the job silently un-requires it.
+- Still to do by Richard, after the first pull request has run it: add **Validate** as a required status check in the "Updates to main" ruleset and turn on "up to date before merging". Then a deliberate bad pull request (wrong checksum) is shown failing and closed.
 
 ### 2026-09-19: The validator and the shared samples
 

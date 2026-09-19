@@ -23,11 +23,11 @@ Instructions for AI agents working in this repository.
 
 ## Layout
 
-See the table in `README.md`. Files under `scripts/` and `.github/workflows/` run in CI on a pull request's own copy, so read any change to them carefully before merging. Sample files in `tests/valid/` and `tests/invalid/` are shared with the app's own validator: change them in step with the app.
+See the table in `README.md`. Files under `scripts/`, `schema/`, `tests/` and `.github/workflows/` run in CI on a pull request's own copy, so read any change to them carefully before merging. The workflow's job is named `Validate`: that name is the required status check in the `main` ruleset, so do not rename it without telling Richard. Sample files in `tests/valid/` and `tests/invalid/` are shared with the app's own validator: change them in step with the app.
 
 ## Tests
 
-`python3 -m pip install -r requirements.txt` once, then `python3 -m unittest discover -s tests -v`. Run them before every pull request; the `Tests` workflow runs the same thing.
+`python3 -m pip install -r requirements.txt` once, then `python3 -m unittest discover -s tests -v`. Run them before every pull request; the `Validate` workflow runs the same thing, after the schema, checksum and `validate.py` checks on `v1/game-rules.json`.
 
 ## Monthly check
 
