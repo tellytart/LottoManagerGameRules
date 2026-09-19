@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/tellytart/LottoManagerGameRules/main/schema/game-rules-v1.schema.json",
+  "title": "LottoManager game rules file, format v1",
+  "description": "Structural check for v1/game-rules.json. It checks shape only: which rules also need comparing values across the file (unique ids, rising effectiveFrom dates, tiers that can actually match, IANA time zones, the checksum, 'no published rule set changed') are done by scripts/validate.py. Unknown extra fields are allowed on purpose, so an optional field can be added later without a new format version.",
+  "type": "object",
+  "required": ["schemaVersion", "checkedOn", "games", "checksum"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "checkedOn": { "$ref": "#/$defs/date", "description": "The date of the developer's last monthly check, bumped even when nothing changed." },
+    "games": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/game" } },
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "SHA-256 over every byte before the final checksum line. Written by scripts/seal.py."
+    }
+  },
+
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+      "description": "A calendar date, YYYY-MM-DD. (That it is a real date is checked by validate.py.)"
+    },
+    "time": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+      "description": "Local wall-clock time in the game's timezone, HH:mm."
+    },
+    "minorUnits": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "An amount in minor units of the game's currency (200 is 2.00 in GBP). Never a decimal."
+    },
+    "count": { "type": "integer", "minimum": 1 },
+
+    "game": {
+      "type": "object",
+      "required": ["id", "name", "currency", "timezone", "ballSchemes", "ruleSets"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 code." },
+        "timezone": { "type": "string", "minLength": 1, "description": "IANA timezone id, e.g. Europe/London." },
+        "endsAfter": {
+          "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }],
+          "description": "The last draw date, or null while the game continues."
+        },
+        "ballSchemes": {
+          "type": "object",
+          "required": ["main"],
+          "additionalProperties": { "$ref": "#/$defs/colourRanges" },
+          "description": "One colour-range list per number set: 'main', and each extra set by name."
+        },
+        "ruleSets": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ruleSet" } }
+      }
+    },
+
+    "colourRanges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "color"],
+        "properties": {
+          "from": { "type": "integer", "minimum": 0 },
+          "to": { "type": "integer", "minimum": 0 },
+          "color": { "type": "string", "description": "An app BallColor name. An unknown name is shown grey, so it is not restricted here." }
+        }
+      }
+    },
+
+    "ruleSet": {
+      "type": "object",
+      "required": ["id", "effectiveFrom", "price", "rounds", "draws", "numbers", "tiers"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*-[0-9]{4}-[0-9]{2}-[0-9]{2}-r[1-9][0-9]*$",
+          "description": "<game>-<effectiveFrom>-r<revision>, revision a whole number from 1."
+        },
+        "effectiveFrom": { "$ref": "#/$defs/date", "description": "The first draw date this rule set applies to." },
+        "price": { "$ref": "#/$defs/minorUnits", "description": "Price per line." },
+        "rounds": { "$ref": "#/$defs/count", "description": "Chances a line gets within one draw (Lotto has 2)." },
+        "claimDays": { "$ref": "#/$defs/count", "description": "How many days after a draw a prize can be claimed." },
+        "draws": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/drawDay" } },
+        "numbers": { "$ref": "#/$defs/numbers" },
+        "tiers": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/tier" }, "description": "Prize tiers, highest first." },
+        "raffle": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/raffle" }]
+        }
+      }
+    },
+
+    "drawDay": {
+      "type": "object",
+      "required": ["weekday", "cutOff", "live", "results"],
+      "properties": {
+        "weekday": { "enum": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] },
+        "cutOff": { "$ref": "#/$defs/time" },
+        "live": { "$ref": "#/$defs/time" },
+        "results": { "$ref": "#/$defs/time" }
+      }
+    },
+
+    "numberSet": {
+      "type": "object",
+      "required": ["count", "min", "max"],
+      "properties": {
+        "count": { "$ref": "#/$defs/count" },
+        "min": { "type": "integer", "minimum": 0 },
+        "max": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "numbers": {
+      "type": "object",
+      "required": ["main"],
+      "properties": {
+        "main": { "$ref": "#/$defs/numberSet" },
+        "extras": { "type": "array", "items": { "$ref": "#/$defs/extra" } }
+      }
+    },
+
+    "extra": {
+      "description": "An extra number set. Lotto's bonus ball is drawn from the main balls; every other extra is its own set of balls the player picks from. An unknown kind is rejected because it would change how prizes are worked out.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "count"],
+          "properties": {
+            "kind": { "const": "bonusBall" },
+            "count": { "$ref": "#/$defs/count" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["kind", "name", "count", "min", "max"],
+          "properties": {
+            "kind": { "const": "separateSet" },
+            "name": { "type": "string", "minLength": 1 },
+            "count": { "$ref": "#/$defs/count" },
+            "min": { "type": "integer", "minimum": 0 },
+            "max": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+
+    "tier": {
+      "type": "object",
+      "required": ["id", "name", "match", "prize"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "match": {
+          "type": "object",
+          "required": ["main"],
+          "properties": {
+            "main": { "type": "integer", "minimum": 0 },
+            "bonusBall": { "type": "boolean", "description": "Whether Lotto's Bonus Ball must also match." },
+            "extras": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 },
+              "description": "How many numbers must match in each named extra set."
+            }
+          }
+        },
+        "prize": { "$ref": "#/$defs/prize" }
+      }
+    },
+
+    "prize": {
+      "description": "fixed: an amount from the file. variable: the manager types the amount (the app never derives one). instalments: a fixed amount paid a number of times, each instalment its own Prize share.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "amount"],
+          "properties": { "kind": { "const": "fixed" }, "amount": { "$ref": "#/$defs/minorUnits" } }
+        },
+        {
+          "type": "object",
+          "required": ["kind"],
+          "properties": { "kind": { "const": "variable" } }
+        },
+        {
+          "type": "object",
+          "required": ["kind", "amount", "count", "everyMonths"],
+          "properties": {
+            "kind": { "const": "instalments" },
+            "amount": { "$ref": "#/$defs/minorUnits" },
+            "count": { "$ref": "#/$defs/count" },
+            "everyMonths": { "$ref": "#/$defs/count" }
+          }
+        }
+      ]
+    },
+
+    "raffle": {
+      "type": "object",
+      "required": ["name", "everyDraw"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "everyDraw": { "type": "boolean" }
+      }
+    }
+  }
+}

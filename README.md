@@ -15,10 +15,12 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 | Path | What it is |
 |---|---|
 | `v1/game-rules.json` | The file the app fetches (added by a later change) |
-| `schema/` | JSON Schema for the file, so editors flag mistakes (later) |
-| `scripts/` | `validate.py` and `seal.py`: the validation rules, and the script that writes the checksum (later) |
+| `schema/game-rules-v1.schema.json` | JSON Schema for the file's shape, so editors and CI flag mistakes |
+| `scripts/seal.py` | Writes (`seal.py FILE`) or verifies (`seal.py --check FILE`) the checksum on the file's last line |
+| `scripts/validate.py` | The full validation rules (later) |
 | `tests/valid/`, `tests/invalid/` | Sample files, shared with the app's own validator so the two stay in step (later) |
-| `.github/workflows/` | The validation workflow (later) |
+| `tests/test_*.py` | Unit tests for the scripts and the schema |
+| `.github/workflows/` | CI: `tests.yml` runs the unit tests on every pull request; the full validation workflow comes later |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
 
@@ -26,10 +28,17 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 
 - A published rule set is never edited. A correction is a new rule set: a later `effectiveFrom`, or the same one with a higher revision.
 - Changes go in by pull request. The plan is for `main` to be protected and keep a **linear history**, so merge with **squash** or **rebase**, not a merge commit.
-- The file will end with a checksum line written by `scripts/seal.py`, and a pull request with a wrong checksum will fail a validation check. Both arrive with later work; until the branch protection is switched on and that workflow has run once, nothing enforces them.
+- The file ends with a checksum line written by `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`), and a pull request with a wrong checksum will fail a validation check. The check arrives with later work; until the branch protection is switched on and that workflow has run once, nothing enforces them.
 - `.gitattributes` forces LF line endings on `*.json`, because the checksum covers the raw bytes.
 
 The format is specified in the LottoManager project's `docs/game-rules-file.md` (that repository is currently private, so the link may not open for you).
+
+## Running the tests
+
+```sh
+python3 -m pip install -r requirements.txt   # once: the pinned jsonschema
+python3 -m unittest discover -s tests -v
+```
 
 ## Licence
 

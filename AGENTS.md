@@ -8,7 +8,7 @@ Instructions for AI agents working in this repository.
 
 ## Rules that must not be broken
 
-- **Bytes matter.** The app checks a SHA-256 over the raw bytes of `v1/game-rules.json` (everything before its final `"checksum"` line). Never re-format, re-serialise or re-indent the file by hand or with a JSON tool; change it only through `scripts/seal.py` once that exists. `.gitattributes` forces LF endings on `*.json` for the same reason.
+- **Bytes matter.** The app checks a SHA-256 over the raw bytes of `v1/game-rules.json` (everything before its final `"checksum"` line). Never re-format, re-serialise or re-indent the file by hand or with a JSON tool; change it only through `scripts/seal.py` (`python3 scripts/seal.py v1/game-rules.json`; `--check` verifies). `.gitattributes` forces LF endings on `*.json` for the same reason.
 - **A published rule set is never edited.** A correction is a new rule set (later `effectiveFrom`, or the same one with a higher revision). Ids look like `<game>-<effectiveFrom>-r<revision>`.
 - **Data only.** No executable content, no URLs the app should follow, nothing about users.
 - **The repo is public.** Nothing private goes in files, issues, commit messages or the Journal: no credentials, no personal details, nothing from the private app repo beyond what the README already says.
@@ -24,6 +24,10 @@ Instructions for AI agents working in this repository.
 ## Layout
 
 See the table in `README.md`. Files under `scripts/` and `.github/workflows/` run in CI on a pull request's own copy, so read any change to them carefully before merging. Sample files in `tests/valid/` and `tests/invalid/` are shared with the app's own validator: change them in step with the app.
+
+## Tests
+
+`python3 -m pip install -r requirements.txt` once, then `python3 -m unittest discover -s tests -v`. Run them before every pull request; the `Tests` workflow runs the same thing.
 
 ## Monthly check
 
