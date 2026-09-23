@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The
 
 ### Added
 
+- **The support site** in `docs/`, served by GitHub Pages at support.richardholland.com: a home page, the Privacy Policy (`/privacy/`), the Support page (`/support/`, an email link) and one shared `site.css` built from the app's design tokens. Terms of Use links out to Apple's standard EULA from every page. `.nojekyll` tells Pages to serve the files as they are. This does not change the rules file.
 - **First rules file, `v1/game-rules.json`** (checked 2026-09-19 against the figures researched that day, see CHECKLIST.md for the sources), one current rule set per game:
   - Lotto, `lotto-2026-06-10-r1`, effective 2026-06-10: £2.00, two Rounds, Wed and Sat, Match 6 jackpot (manager types it) down to Match 2, Guaranteed Millionaire Raffle.
   - EuroMillions, `euromillions-2025-07-28-r1`, effective 2025-07-28: £2.50, Tue and Fri, 13 tiers all typed by the manager, UK Millionaire Maker raffle.

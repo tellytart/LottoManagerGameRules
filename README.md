@@ -8,6 +8,8 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 
 **Data only, no user data.** The file holds facts about games, never behaviour, and the app sends nothing about its users when it fetches it: only an ordinary HTTPS request. The file carries a `checkedOn` date that is bumped at each monthly check, even when nothing changed, and the app shows it.
 
+**The support site.** `docs/` is also the app's small public website, served by GitHub Pages at <https://support.richardholland.com>: the Privacy Policy (`/privacy/`) and Support (`/support/`) pages the App Store listing and the app's paywall link to. Terms of Use is not hosted here; every page links out to Apple's standard EULA instead. The pages are plain hand-written HTML with one shared stylesheet and no build step, so the header and footer are copied into each page and must be kept in step by hand. Nothing on the site changes the rules file.
+
 **Where the facts come from.** Official National Lottery / Allwyn game procedures and pages (listed in [CHECKLIST.md](CHECKLIST.md)). The file restates facts (a price, a draw day, the number of balls); it does not copy their text.
 
 ## Layout
@@ -24,6 +26,7 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 | `.github/workflows/validate.yml` | CI, the pull-request gate (job **Validate**): on every pull request, the schema check, the checksum check and `validate.py` against the base branch's copy of the rules file (skipped while `v1/game-rules.json` does not exist yet), then the unit tests |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
+| `docs/` | The GitHub Pages site (support.richardholland.com): `index.html`, `privacy/`, `support/`, the shared `site.css`, `CNAME` (the custom domain) and `.nojekyll` (serve the files as they are, without Jekyll) |
 
 ## Changing the rules
 
