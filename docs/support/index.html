@@ -26,8 +26,27 @@
     <h1>Support</h1>
 
     <p>Something not working, or a question about the app? Send an email and the developer will reply.</p>
-    <p><a class="button" href="mailto:richard@richardholland.com?subject=LottoManager%20support">Email support</a></p>
-    <p class="meta">richard@richardholland.com. If you can, say which device you use and which version of the app you have.</p>
+    <!--
+      The address is never written out whole in this file, so bots that scan page source for
+      "name@domain" find nothing. The script below puts it together in the browser. Without
+      JavaScript the button stays hidden and the <noscript> line shows it in words instead.
+    -->
+    <p><a class="button" id="email-button" href="#" hidden>Email support</a></p>
+    <noscript><p class="meta">Email: richard (at) richardholland (dot) com</p></noscript>
+    <p class="meta"><span id="email-text"></span>If you can, say which device you use and which version of the app you have.</p>
+    <script>
+      // The address is stored in pieces, backwards, and reassembled here.
+      (function () {
+        var parts = ["moc", "dnallohdrahcir", "drahcir"].map(function (s) {
+          return s.split("").reverse().join("");
+        });
+        var address = parts[2] + "@" + parts[1] + "." + parts[0];
+        var button = document.getElementById("email-button");
+        button.href = "mailto:" + address + "?subject=LottoManager%20support";
+        button.hidden = false;
+        document.getElementById("email-text").textContent = address + ". ";
+      })();
+    </script>
 
     <h2>Subscriptions and refunds</h2>
     <p>Apple handles subscriptions. You can manage or cancel yours in the App Store app, or in the app under Settings &gt; Subscription. To ask for a refund, go to <a class="external" href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>.</p>

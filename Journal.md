@@ -29,6 +29,12 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 5. The Journey
 
+### 2026-09-23: Hiding the support address from scrapers
+
+- The Support page's email address is now put together by a few lines of JavaScript from pieces stored backwards, so the page source never contains a whole `name@domain` for a harvester to find. Without JavaScript, a `<noscript>` line spells it out ("richard (at) ...") and the button stays hidden.
+- **Gotcha:** the `hidden` attribute lost to `.button { display: inline-flex }` (a class rule beats the browser's own `display: none`), so `site.css` now has `[hidden] { display: none !important; }`.
+- **Gotcha:** this only helps from now on. The plain address is still in this repo's git history (the first version of the page), and history is never rewritten here. It keeps casual scraping of the live page down, but it doesn't make the address secret.
+
 ### 2026-09-23: The support site
 
 - `docs/` was already the GitHub Pages source (it held only `CNAME`, so the domain answered with a 404). It now holds the app's public Privacy Policy and Support pages. Think of it as a small notice pinned beside the price list: the same public noticeboard, a different notice.
