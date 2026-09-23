@@ -29,6 +29,11 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 5. The Journey
 
+### 2026-09-23: Apple moved its standard EULA
+
+- **Gotcha:** every Terms link on the site pointed at `apple.com/legal/internetservices/itunes/dev/stdeula/`, the address most guides still quote. It now returns 404 (Apple doesn't redirect it). The page lives at `apple.com/legal/internet-services/itunes/dev/stdeula/`, with a hyphen. All three pages' header and footer links now use it. An outside link can break without anything here changing, so the monthly check is a good moment to click through it.
+- The site's domain also moved, from support.richardholland.com to lottomanager.richardholland.com (`docs/CNAME` already said so). The README, AGENTS.md and the stylesheet comment now agree.
+
 ### 2026-09-23: Hiding the support address from scrapers
 
 - The Support page's email address is now put together by a few lines of JavaScript from pieces stored backwards, so the page source never contains a whole `name@domain` for a harvester to find. Without JavaScript, a `<noscript>` line spells it out ("richard (at) ...") and the button stays hidden.
