@@ -8,11 +8,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The
 
 ### Changed
 
+- The site's Terms of Use links now point at Apple's standard EULA at its current address, `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`. Apple moved it from `.../internetservices/...`, which now returns 404, so every Terms link on the site was broken.
+- The site's domain is now lottomanager.richardholland.com (it moved from support.richardholland.com); the README, AGENTS.md and the stylesheet's header comment say so.
 - The Support page no longer writes the support email address in its source: a small script assembles it in the browser, so bots scanning the HTML for addresses find nothing. Without JavaScript the page shows the address spelled out in words instead of a button.
 
 ### Added
 
-- **The support site** in `docs/`, served by GitHub Pages at support.richardholland.com: a home page, the Privacy Policy (`/privacy/`), the Support page (`/support/`, an email link) and one shared `site.css` built from the app's design tokens. Terms of Use links out to Apple's standard EULA from every page. `.nojekyll` tells Pages to serve the files as they are. This does not change the rules file.
+- **The support site** in `docs/`, served by GitHub Pages at lottomanager.richardholland.com: a home page, the Privacy Policy (`/privacy/`), the Support page (`/support/`, an email link) and one shared `site.css` built from the app's design tokens. Terms of Use links out to Apple's standard EULA from every page. `.nojekyll` tells Pages to serve the files as they are. This does not change the rules file.
 - **First rules file, `v1/game-rules.json`** (checked 2026-09-19 against the figures researched that day, see CHECKLIST.md for the sources), one current rule set per game:
   - Lotto, `lotto-2026-06-10-r1`, effective 2026-06-10: £2.00, two Rounds, Wed and Sat, Match 6 jackpot (manager types it) down to Match 2, Guaranteed Millionaire Raffle.
   - EuroMillions, `euromillions-2025-07-28-r1`, effective 2025-07-28: £2.50, Tue and Fri, 13 tiers all typed by the manager, UK Millionaire Maker raffle.
