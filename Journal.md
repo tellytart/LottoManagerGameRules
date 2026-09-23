@@ -29,6 +29,15 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 5. The Journey
 
+### 2026-09-23: The support site
+
+- `docs/` was already the GitHub Pages source (it held only `CNAME`, so the domain answered with a 404). It now holds the app's public Privacy Policy and Support pages. Think of it as a small notice pinned beside the price list: the same public noticeboard, a different notice.
+- **Decision:** the pages are plain HTML with one stylesheet and no site generator: three pages don't justify a build step. The cost is that the header and footer are copied into every page, so a change to them means editing each page (a comment in each page says so).
+- **Decision:** clean URLs (`/privacy/`, `/support/`) come from `privacy/index.html` and `support/index.html`, and links are root-absolute (`/site.css`). So a local preview needs a small web server (`python3 -m http.server -d docs`); opening a file directly will not load the stylesheet.
+- **Decision:** Terms of Use is never copied here; every page links out to Apple's standard EULA, as the App Store allows.
+- **Gotcha:** without `.nojekyll`, GitHub Pages runs every file through Jekyll first. That is harmless today, but it would hide any file or folder whose name starts with `_`, so the site opts out.
+- The layout comes from the app's layout prototype ("variant A": a sticky top bar, one text column and a footer that repeats the links), and the colours and spacing are copied from the app's design tokens, in light and dark.
+
 ### 2026-09-19: The first rules file
 
 - **Decision (Richard):** this repo has no version number, version file, build number or release tags. The rules are versioned inside the file by rule set (`effectiveFrom` date plus revision on that date), so a repo-level version would say nothing extra. Written into AGENTS.md and README.
