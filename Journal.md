@@ -37,6 +37,26 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 - **Decision:** a `null` country reads as missing (GB), as Swift's optional decoding reads it; text that is not a code is `bad-country`, and a non-text value is `malformed-structure`.
 - **Gotcha:** `sed -i ''` on this Mac is GNU sed (it read `''` as the script). Byte-exact edits to the rules file are safer with a few lines of Python on `read_bytes`/`write_bytes`, then `seal.py`.
 
+### 2026-09-23: Apple moved its standard EULA
+
+- **Gotcha:** every Terms link on the site pointed at `apple.com/legal/internetservices/itunes/dev/stdeula/`, the address most guides still quote. It now returns 404 (Apple doesn't redirect it). The page lives at `apple.com/legal/internet-services/itunes/dev/stdeula/`, with a hyphen. All three pages' header and footer links now use it. An outside link can break without anything here changing, so the monthly check is a good moment to click through it.
+- The site's domain also moved, from support.richardholland.com to lottomanager.richardholland.com (`docs/CNAME` already said so). The README, AGENTS.md and the stylesheet comment now agree.
+
+### 2026-09-23: Hiding the support address from scrapers
+
+- The Support page's email address is now put together by a few lines of JavaScript from pieces stored backwards, so the page source never contains a whole `name@domain` for a harvester to find. Without JavaScript, a `<noscript>` line spells it out ("richard (at) ...") and the button stays hidden.
+- **Gotcha:** the `hidden` attribute lost to `.button { display: inline-flex }` (a class rule beats the browser's own `display: none`), so `site.css` now has `[hidden] { display: none !important; }`.
+- **Gotcha:** this only helps from now on. The plain address is still in this repo's git history (the first version of the page), and history is never rewritten here. It keeps casual scraping of the live page down, but it doesn't make the address secret.
+
+### 2026-09-23: The support site
+
+- `docs/` was already the GitHub Pages source (it held only `CNAME`, so the domain answered with a 404). It now holds the app's public Privacy Policy and Support pages. Think of it as a small notice pinned beside the price list: the same public noticeboard, a different notice.
+- **Decision:** the pages are plain HTML with one stylesheet and no site generator: three pages don't justify a build step. The cost is that the header and footer are copied into every page, so a change to them means editing each page (a comment in each page says so).
+- **Decision:** clean URLs (`/privacy/`, `/support/`) come from `privacy/index.html` and `support/index.html`, and links are root-absolute (`/site.css`). So a local preview needs a small web server (`python3 -m http.server -d docs`); opening a file directly will not load the stylesheet.
+- **Decision:** Terms of Use is never copied here; every page links out to Apple's standard EULA, as the App Store allows.
+- **Gotcha:** without `.nojekyll`, GitHub Pages runs every file through Jekyll first. That is harmless today, but it would hide any file or folder whose name starts with `_`, so the site opts out.
+- The layout comes from the app's layout prototype ("variant A": a sticky top bar, one text column and a footer that repeats the links), and the colours and spacing are copied from the app's design tokens, in light and dark.
+
 ### 2026-09-19: The first rules file
 
 - **Decision (Richard):** this repo has no version number, version file, build number or release tags. The rules are versioned inside the file by rule set (`effectiveFrom` date plus revision on that date), so a repo-level version would say nothing extra. Written into AGENTS.md and README.
