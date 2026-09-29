@@ -30,6 +30,8 @@ VALIDATE = ROOT / "scripts" / "validate.py"
 VALID = TESTS / "valid"
 INVALID = TESTS / "invalid"
 SCHEMA = ROOT / "schema" / "game-rules-v1.schema.json"
+sys.path.insert(0, str(ROOT / "scripts"))
+import seal  # noqa: E402  (path set up just above)
 
 
 def run(path, base=None):
@@ -61,8 +63,15 @@ class ValidSamplesTests(unittest.TestCase):
     def test_there_are_samples_for_every_required_case(self):
         names = {p.stem for p in samples(VALID)}
         for wanted in ("minimal", "four-games", "unknown-colour", "unknown-field", "unsupported-currency",
-                       "rule-set-correction", "held-rule-set-unchanged"):
+                       "rule-set-correction", "held-rule-set-unchanged", "game-country", "table-currency",
+                       "game-id-starting-customs"):
             self.assertIn(wanted, names)
+
+    def test_no_valid_and_invalid_file_share_a_name(self):
+        # The app copies both folders into one flat bundle, where two files of the same name collide.
+        valid = {p.name for p in VALID.glob("*.json")}
+        invalid = {p.name for p in INVALID.glob("*.json")}
+        self.assertEqual(valid & invalid, set())
 
     def test_every_valid_sample_is_accepted(self):
         for path in samples(VALID):
@@ -147,6 +156,40 @@ class CommandLineTests(unittest.TestCase):
             status, out, _ = run(path)
         self.assertEqual(status, 1)
         self.assertEqual(reason_codes(out), {"bad-amount", "bad-timezone", "checksum-wrong"})
+
+
+class GameLevelRuleTests(unittest.TestCase):
+    """Edge cases of the country, reserved-id and currency rules that do not need a shared sample."""
+
+    def check(self, change):
+        """Apply `change(game)` to minimal.json's Game, re-seal, and return the reason codes found."""
+        doc = json.loads((VALID / "minimal.json").read_text())
+        change(doc["games"][0])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "changed.json"
+            path.write_bytes(seal.seal(json.dumps(doc, indent=2).encode() + b"\n"))
+            _, out, _ = run(path)
+        return reason_codes(out)
+
+    def test_a_null_country_reads_as_missing(self):
+        # Missing and null both mean GB, as the app's optional decode reads them.
+        self.assertEqual(self.check(lambda g: g.update(country=None)), set())
+
+    def test_a_three_letter_or_numeric_country_code_is_not_a_country(self):
+        for bad in ("GBR", "826", "", "XK", "EU"):
+            with self.subTest(country=bad):
+                self.assertEqual(self.check(lambda g, b=bad: g.update(country=b)), {"bad-country"})
+
+    def test_only_the_custom_hyphen_prefix_is_reserved(self):
+        def rename(game, new_id):
+            game["id"] = new_id
+            game["ruleSets"][0]["id"] = f"{new_id}-2026-01-01-r1"
+        self.assertEqual(self.check(lambda g: rename(g, "custom")), set())
+        self.assertEqual(self.check(lambda g: rename(g, "lotto-custom")), set())
+        self.assertEqual(self.check(lambda g: rename(g, "custom-x")), {"reserved-game-id"})
+
+    def test_a_badly_shaped_currency_stays_malformed_not_unknown(self):
+        self.assertEqual(self.check(lambda g: g.update(currency="gbp")), {"malformed-structure"})
 
 
 if __name__ == "__main__":

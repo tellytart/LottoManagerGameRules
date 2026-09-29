@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-09-19",
+  "games": [
+    {
+      "id": "mini-kw",
+      "name": "Mini",
+      "currency": "KWD",
+      "country": "KW",
+      "timezone": "Asia/Kuwait",
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 10,
+            "color": "white"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "mini-kw-2026-01-01-r1",
+          "effectiveFrom": "2026-01-01",
+          "price": 100,
+          "rounds": 1,
+          "draws": [
+            {
+              "weekday": "sat",
+              "cutOff": "19:00",
+              "live": "20:00",
+              "results": "21:00"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 3,
+              "min": 1,
+              "max": 10
+            }
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "Jackpot",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "checksum": "sha256:312771564dd46b967021c476b33edfbda157175f4cb0d2747b3dd16b4e2ba98e"
+}

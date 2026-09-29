@@ -29,6 +29,14 @@ There is almost no architecture, which is the point. Think of a noticeboard with
 
 ## 5. The Journey
 
+### 2026-09-29: Country, `custom-` ids and the currency table (issue #14)
+
+- **Backwards compatible:** the app fingerprints each rule set on its own, and `country` lives on the Game, outside every rule set, so adding it changes no held fingerprint; an unknown field is ignored by today's app. `validate.py`'s own `--base` check agrees (it compares rule sets only). So the published file could gain `"country": "GB"` without a new rule set or a `schemaVersion` bump.
+- **Decision:** the currency table is copied from the app's own currency table rather than built from a Python package or an OS list, because the rule is "the same table as the app", not "whatever ISO says". The two exponent-4 fund units are out there, so they are out here.
+- **Decision:** the country list is ISO's 249 officially assigned codes. Apple's `Locale.Region.isoRegions` has 261 two-letter entries; the extra 12 (AC, CP, CQ, DG, EA, EU, EZ, IC, QO, TA, UN, XK) are reserved or user-assigned, not countries. `XK` (Kosovo) is the one a real lottery might want one day; it would need an explicit decision. Any other checker of this file needs the same 249, not an OS region list.
+- **Decision:** a `null` country reads as missing (GB), as Swift's optional decoding reads it; text that is not a code is `bad-country`, and a non-text value is `malformed-structure`.
+- **Gotcha:** `sed -i ''` on this Mac is GNU sed (it read `''` as the script). Byte-exact edits to the rules file are safer with a few lines of Python on `read_bytes`/`write_bytes`, then `seal.py`.
+
 ### 2026-09-23: Apple moved its standard EULA
 
 - **Gotcha:** every Terms link on the site pointed at `apple.com/legal/internetservices/itunes/dev/stdeula/`, the address most guides still quote. It now returns 404 (Apple doesn't redirect it). The page lives at `apple.com/legal/internet-services/itunes/dev/stdeula/`, with a hyphen. All three pages' header and footer links now use it. An outside link can break without anything here changing, so the monthly check is a good moment to click through it.

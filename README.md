@@ -21,12 +21,19 @@ The `v1` is the format's major version: a breaking change to the format adds a `
 | `scripts/seal.py` | Writes (`seal.py FILE`) or verifies (`seal.py --check FILE`) the checksum on the file's last line |
 | `scripts/validate.py` | The full validation rules: `validate.py FILE [--base OLDER]` exits 1 with a stable reason code per broken rule (see `tests/invalid/README.md`); `--base` also checks that no published rule set changed |
 | `tests/valid/`, `tests/invalid/`, `tests/expected.json` | Sample files (`tests/valid/current-game-rules.json` is a byte-for-byte copy of the real file, kept in step by a test) (one invalid sample per rule, mapped to its reason code in `expected.json`), shared with the app's own validator so the two stay in step |
+| `scripts/iso_codes.py` | The ISO 4217 currency exponent table (kept equal to the app's) and the ISO 3166-1 country codes that `validate.py` checks Games against |
 | `scripts/check_schema.py` | Checks a rules file against the JSON Schema: `check_schema.py FILE` (needs `jsonschema`) |
 | `tests/test_*.py` | Unit tests for the scripts, the schema and the real rules file (`test_rules_file.py`) |
 | `.github/workflows/validate.yml` | CI, the pull-request gate (job **Validate**): on every pull request, the schema check, the checksum check and `validate.py` against the base branch's copy of the rules file (skipped while `v1/game-rules.json` does not exist yet), then the unit tests |
 | `CHECKLIST.md` | The monthly check |
 | `CHANGELOG.md` | What changed in the rules, and when |
 | `docs/` | The GitHub Pages site (lottomanager.richardholland.com): `index.html`, `privacy/`, `support/`, the shared `site.css`, `CNAME` (the custom domain) and `.nojekyll` (serve the files as they are, without Jekyll) |
+
+## Game fields worth knowing
+
+- **`country`** (optional): the ISO 3166-1 alpha-2 code of the country a Game is played in, upper case (`GB`, never `UK`). Missing or `null` means GB. It seeds a new syndicate's Country in the app. A code that is not a real country is refused (`bad-country`).
+- **`currency`**: an ISO 4217 code in the exponent table in `scripts/iso_codes.py` (anything else is refused as `unknown-currency`). The file never says how many decimal places a currency has; that comes from the table.
+- **Game ids starting `custom-` are reserved** for Games managers make in the app (`custom-<uuid>`) and are refused here (`reserved-game-id`). A Game in another country or currency gets its own id, `<game>-<country>` (for example `euromillions-ie`); a Game never changes currency.
 
 ## Changing the rules
 

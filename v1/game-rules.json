@@ -6,6 +6,7 @@
       "id": "lotto",
       "name": "Lotto",
       "currency": "GBP",
+      "country": "GB",
       "timezone": "Europe/London",
       "endsAfter": null,
       "ballSchemes": {
@@ -155,6 +156,7 @@
       "id": "euromillions",
       "name": "EuroMillions",
       "currency": "GBP",
+      "country": "GB",
       "timezone": "Europe/London",
       "endsAfter": null,
       "ballSchemes": {
@@ -380,6 +382,7 @@
       "id": "thunderball",
       "name": "Thunderball",
       "currency": "GBP",
+      "country": "GB",
       "timezone": "Europe/London",
       "endsAfter": null,
       "ballSchemes": {
@@ -574,6 +577,7 @@
       "id": "set-for-life",
       "name": "Set For Life",
       "currency": "GBP",
+      "country": "GB",
       "timezone": "Europe/London",
       "endsAfter": null,
       "ballSchemes": {
@@ -740,5 +744,5 @@
       ]
     }
   ],
-  "checksum": "sha256:9fa0761694cafaf88ba43a13a902669f1b7cd81fec9d679fc026da870b335759"
+  "checksum": "sha256:33450b2362a56da203975453640becd98cbacb551c4fa079c21deac042d64ac6"
 }

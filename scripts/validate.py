@@ -38,12 +38,14 @@ Reason codes (the file is rejected whole, ADR 0006):
     bad-timezone                 not a time zone the IANA database knows
     effective-from-not-rising    rule sets are not in strictly rising (effectiveFrom, revision) order
     held-rule-set-changed        (with --base) a rule set in the older file changed or vanished
+    bad-country                  a Game's `country` is not an officially assigned ISO 3166-1 alpha-2 code
+    reserved-game-id             a Game id starts with `custom-` (kept for Games managers make in the app)
+    unknown-currency             a Game's currency is not in the app's ISO 4217 exponent table
 
-Accepted, not rejected ("degrade" rules): an unknown colour name, an unknown extra field, and a
-Game in a currency the app does not support (it is skipped by the app, but still checked here
-so a typo in it cannot hide).
+Accepted, not rejected ("degrade" rules): an unknown colour name and an unknown extra field.
 
-Only the Python standard library is used. The checksum comes from seal.py, beside this file.
+Only the Python standard library is used. The checksum comes from seal.py, and the currency and
+country tables from iso_codes.py, both beside this file.
 """
 import argparse
 import datetime
@@ -57,6 +59,7 @@ from pathlib import Path
 # seal.py sits beside this script; put this folder on the import path so it is found
 # whether we are run as a script or imported by a test.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import iso_codes  # noqa: E402
 import seal  # noqa: E402
 
 SUPPORTED_SCHEMA_VERSION = 1
@@ -67,6 +70,9 @@ DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 TIME = re.compile(r"([01][0-9]|2[0-3]):[0-5][0-9]")
 CURRENCY = re.compile(r"[A-Z]{3}")
 REVISION = re.compile(r"[1-9][0-9]*")
+# Game ids starting with this belong to Games managers make in the app (`custom-<uuid>`), so the
+# public file may never use one: a clash would mix up two different Games.
+RESERVED_GAME_ID_PREFIX = "custom-"
 
 
 class SetupError(Exception):
@@ -216,6 +222,10 @@ class Checker:
             else:
                 if not SLUG.fullmatch(game_id):
                     self.add("bad-id", f"{where}.id", f"{game_id!r} is not lowercase words joined by hyphens")
+                elif game_id.startswith(RESERVED_GAME_ID_PREFIX):
+                    self.add("reserved-game-id", f"{where}.id",
+                             f"{game_id!r} starts with {RESERVED_GAME_ID_PREFIX!r}, which is kept for Games "
+                             "managers make in the app")
                 if game_id in self.game_ids:
                     self.add("duplicate-id", f"{where}.id", f"Game id {game_id!r} is used more than once")
                 self.game_ids.add(game_id)
@@ -225,9 +235,22 @@ class Checker:
             self.non_empty_text(name, f"{where}.name")
 
         currency = self.require(game, "currency", where)
-        if currency is not None and not (is_text(currency) and CURRENCY.fullmatch(currency)):
-            self.malformed(f"{where}.currency", "must be a three-letter ISO 4217 code such as GBP")
-        # A Game in a currency other than GBP is skipped by the app but is still checked in full.
+        if currency is not None:
+            if not (is_text(currency) and CURRENCY.fullmatch(currency)):
+                self.malformed(f"{where}.currency", "must be a three-letter ISO 4217 code such as GBP")
+            elif currency not in iso_codes.CURRENCY_EXPONENTS:
+                # Well formed but not in the app's exponent table: no app could show the Game's money.
+                self.add("unknown-currency", f"{where}.currency",
+                         f"{currency!r} is not in the ISO 4217 exponent table (scripts/iso_codes.py)")
+
+        # Optional: missing (or null) means GB. Only the code's reality is checked here.
+        country = game.get("country")
+        if country is not None:
+            if not is_text(country):
+                self.malformed(f"{where}.country", "must be text, an ISO 3166-1 alpha-2 code such as GB")
+            elif country not in iso_codes.COUNTRY_CODES:
+                self.add("bad-country", f"{where}.country",
+                         f"{country!r} is not an ISO 3166-1 alpha-2 country code (upper case, e.g. GB, IE)")
 
         timezone = self.require(game, "timezone", where)
         if timezone is not None and not (is_text(timezone) and known_timezone(timezone)):

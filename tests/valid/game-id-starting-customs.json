@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-09-19",
+  "games": [
+    {
+      "id": "customs-draw",
+      "name": "Mini",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "ballSchemes": {
+        "main": [
+          {
+            "from": 1,
+            "to": 10,
+            "color": "white"
+          }
+        ]
+      },
+      "ruleSets": [
+        {
+          "id": "customs-draw-2026-01-01-r1",
+          "effectiveFrom": "2026-01-01",
+          "price": 100,
+          "rounds": 1,
+          "draws": [
+            {
+              "weekday": "sat",
+              "cutOff": "19:00",
+              "live": "20:00",
+              "results": "21:00"
+            }
+          ],
+          "numbers": {
+            "main": {
+              "count": 3,
+              "min": 1,
+              "max": 10
+            }
+          },
+          "tiers": [
+            {
+              "id": "jackpot",
+              "name": "Jackpot",
+              "match": {
+                "main": 3
+              },
+              "prize": {
+                "kind": "variable"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "checksum": "sha256:3d9a775aa0c636d3e5aff5ca51eec71b318150a9b46b8ac18fb8388ed03195b4"
+}
