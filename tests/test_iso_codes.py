@@ -1,7 +1,6 @@
 """Tests for scripts/iso_codes.py: the ISO 4217 currency and ISO 3166-1 country tables.
 
-The currency table must match the app's Core table (ISOCurrency.swift in the LottoManager
-repo) code for code and exponent for exponent, so these tests pin its shape and a few
+The currency table must match the app's currency table code for code and exponent for exponent, so these tests pin its shape and a few
 known entries. The country table is the officially assigned ISO 3166-1 alpha-2 codes.
 """
 import sys

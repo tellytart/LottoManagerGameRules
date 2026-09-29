@@ -168,7 +168,7 @@ class GameLevelRuleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "changed.json"
             path.write_bytes(seal.seal(json.dumps(doc, indent=2).encode() + b"\n"))
-            _, out, err = run(path)
+            _, out, _ = run(path)
         return reason_codes(out)
 
     def test_a_null_country_reads_as_missing(self):

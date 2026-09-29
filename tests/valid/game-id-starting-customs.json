@@ -6,7 +6,6 @@
       "id": "customs-draw",
       "name": "Mini",
       "currency": "GBP",
-      "country": "GB",
       "timezone": "Europe/London",
       "ballSchemes": {
         "main": [
@@ -54,5 +53,5 @@
       ]
     }
   ],
-  "checksum": "sha256:c1bc745dcef6dadf3e1c4e0acea1857a1f94c6e699cc8bfb443c2b04b2ab3c38"
+  "checksum": "sha256:3d9a775aa0c636d3e5aff5ca51eec71b318150a9b46b8ac18fb8388ed03195b4"
 }

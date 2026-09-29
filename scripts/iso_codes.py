@@ -1,8 +1,8 @@
 """The two code tables validate.py checks Games against: ISO 4217 currencies and ISO 3166-1 countries.
 
 CURRENCY_EXPONENTS maps each currency a Game may use to its exponent (how many decimal places
-its minor unit has: 0 for JPY, 2 for GBP, 3 for KWD). It must match the app's Core table
-(`ISOCurrency.swift` in the LottoManager repo) code for code and exponent for exponent: a
+its minor unit has: 0 for JPY, 2 for GBP, 3 for KWD). It must match the app's currency
+table code for code and exponent for exponent: a
 Game in a currency the app's table lacks could never be shown, so validate.py refuses it
 (`unknown-currency`). That table is ISO 4217's active currencies (the published list,
 amendment 179) less the fund codes, precious metals, testing and "no currency" codes, which

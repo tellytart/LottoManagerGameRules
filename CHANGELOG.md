@@ -10,7 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The
 
 - **`country` on every Game** (issue #14): an optional ISO 3166-1 alpha-2 code, missing (or `null`) meaning GB. Set to `"GB"` on Lotto, EuroMillions, Thunderball and Set For Life. No rule set changed (the field sits on the Game, outside any rule set), so no new `effectiveFrom` and no `schemaVersion` bump; older apps ignore the unknown field.
 - Three new rejection reasons in `validate.py`, each with invalid samples and `expected.json` entries: `bad-country` (not an officially assigned ISO 3166-1 code, e.g. `UK` or `gb`), `reserved-game-id` (a Game id starting `custom-`, kept for Games managers make in the app) and `unknown-currency` (a currency outside the ISO 4217 exponent table, e.g. `CLF`).
-- `scripts/iso_codes.py`: the ISO 4217 currency exponent table (copied code for code from the app's Core table) and the 249 ISO 3166-1 alpha-2 codes. Tests in `tests/test_iso_codes.py`.
+- `scripts/iso_codes.py`: the ISO 4217 currency exponent table (copied code for code from the app's currency table) and the 249 ISO 3166-1 alpha-2 codes. Tests in `tests/test_iso_codes.py`.
 - Valid samples `game-country.json` (an Irish EUR Game), `table-currency.json` (a three-decimal KWD Game) and `game-id-starting-customs.json`; a test that no valid and invalid sample share a file name.
 - The JSON Schema describes `country` and refuses a `custom-` Game id.
 
