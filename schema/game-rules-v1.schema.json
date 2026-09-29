@@ -38,9 +38,18 @@
       "type": "object",
       "required": ["id", "name", "currency", "timezone", "ballSchemes", "ruleSets"],
       "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "not": { "pattern": "^custom-" },
+          "description": "Lowercase words joined by hyphens. The prefix custom- is kept for Games managers make in the app."
+        },
         "name": { "type": "string", "minLength": 1 },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 code." },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 code. (That it is in the app's exponent table is checked by validate.py.)" },
+        "country": {
+          "oneOf": [{ "type": "string", "pattern": "^[A-Z]{2}$" }, { "type": "null" }],
+          "description": "ISO 3166-1 alpha-2 code of the country the Game is played in. Missing or null means GB. (That it is a real country is checked by validate.py.)"
+        },
         "timezone": { "type": "string", "minLength": 1, "description": "IANA timezone id, e.g. Europe/London." },
         "endsAfter": {
           "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }],

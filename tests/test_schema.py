@@ -168,6 +168,19 @@ class SchemaTests(unittest.TestCase):
             with self.subTest(currency=bad):
                 self.assertRejects(self.mutated(lambda d, b=bad: d["games"][0].update(currency=b)))
 
+    def test_accepts_a_country_or_none(self):
+        # Missing means GB; null reads the same. Whether the code is a real country is validate.py's job.
+        self.assertAccepts(self.mutated(lambda d: d["games"][0].update(country="GB")))
+        self.assertAccepts(self.mutated(lambda d: d["games"][0].update(country=None)))
+
+    def test_rejects_a_badly_shaped_country(self):
+        for bad in ("gb", "GBR", "", 826):
+            with self.subTest(country=bad):
+                self.assertRejects(self.mutated(lambda d, b=bad: d["games"][0].update(country=b)))
+
+    def test_rejects_a_reserved_custom_game_id(self):
+        self.assertRejects(self.mutated(lambda d: d["games"][0].update(id="custom-abc")))
+
     def test_rejects_bad_times_and_weekdays(self):
         draw = lambda d: d["games"][0]["ruleSets"][0]["draws"][0]
         for bad in ("7:30pm", "19:30:00", "24:00", "19:60", "1930"):

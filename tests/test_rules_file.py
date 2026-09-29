@@ -61,6 +61,10 @@ class RulesFileTests(unittest.TestCase):
                 for draw in rule_set["draws"]:
                     self.assertEqual(draw["cutOff"], "19:30")
 
+    def test_every_game_says_it_is_in_gb(self):
+        # Missing would also read as GB, but the file says so outright (issue #14).
+        self.assertEqual([g.get("country") for g in self.doc["games"]], ["GB"] * 4)
+
     def test_lotto_has_two_rounds(self):
         # Pre-June 2026 Lotto (one Round) is deliberately not in the file.
         lotto = self.doc["games"][0]["ruleSets"][0]

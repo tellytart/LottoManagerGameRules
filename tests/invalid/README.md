@@ -36,10 +36,15 @@ Each file here breaks exactly one validation rule, and `scripts/validate.py` mus
 | `bad-timezone` | A time zone is not one the IANA database knows |
 | `effective-from-not-rising` | Within a Game, rule sets are not listed in strictly rising order of (`effectiveFrom`, revision) |
 | `held-rule-set-changed` | With `--base`: a rule set that is in the older file changed (anywhere, including nested fields) or is missing |
+| `bad-country` | A Game's optional `country` is not an officially assigned ISO 3166-1 alpha-2 code, written upper case (`GB`, not `UK` or `gb`) |
+| `reserved-game-id` | A Game id starts with `custom-`: that prefix belongs to Games managers make in the app |
+| `unknown-currency` | A Game's currency is a well-formed code but not in the ISO 4217 exponent table (`scripts/iso_codes.py`, kept equal to the app's), so no app could show its money |
 
 ## Decisions where the spec is silent
 
 - **Tier-match rules.** A tier cannot match if `match.main` is more than the number of main numbers drawn; if a `match.extras` count is more than that extra set draws; if `bonusBall` is true and the game has no Bonus Ball; or if `bonusBall` is true and `match.main` equals the main count (a line that holds every drawn main number has none left to match the Bonus Ball with). Shadowed tiers (one an earlier tier always wins first) are not checked.
 - **Rising `effectiveFrom`.** The spec says "strictly rising" and also that a correction keeps its date and raises the revision. Both hold if rule sets are ordered by (`effectiveFrom`, revision): equal dates are fine when the revision goes up. Listing a rule set with an earlier key after a later one is rejected; the same id twice is `duplicate-id`.
-- **Unsupported currency.** Such a Game is skipped by the app but still fully checked here.
+- **Currency.** Any currency in the ISO 4217 exponent table is accepted (a Game in one an older app does not support is skipped by that app, but is still fully checked here). A code outside the table is `unknown-currency`; one that is not three upper-case letters at all is `malformed-structure`. The file never carries an exponent: it comes from the table alone.
+- **Country.** Missing and `null` both mean GB. A value that is not text is `malformed-structure`; text that is not in the table (reserved codes such as `UK` and `EU`, user-assigned ones such as `XK`, lower case) is `bad-country`.
+- **`custom-` ids.** Only the exact prefix `custom-` is reserved: `custom` on its own, `customs-draw` or `lotto-custom` are ordinary ids. Only the Game id is reported, not the rule set ids that repeat it.
 - **Removing a held rule set** counts as changing it.
